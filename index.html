@@ -34,22 +34,26 @@
         </div>
 
         <div id="ranking" class="tab-content">
-            <h2>Clasificación de Parejas</h2>
-            <div class="content-block">
-                <table class="ranking-table">
-                    <thead>
-                        <tr>
-                            <th>Posición</th>
-                            <th>Pareja</th>
-                            <th>Ganados</th>
-                            <th>Perdidos</th>
-                        </tr>
-                    </thead>
-                    <tbody id="rankingTableBody">
-                        </tbody>
-                </table>
-            </div>
-        </div>
+			<h2>Clasificación de Jugadores</h2>
+			<div class="content-block">
+				<table class="ranking-table">
+					<thead>
+						<tr>
+							<th>Posición</th>
+							<th>Jugador</th>
+							<th>PJ</th>
+							<th>PG</th>
+							<th>PE</th>
+							<th>PP</th>
+							<th>Puntos</th>
+							<th>Puntos por partido</th>
+						</tr>
+					</thead>
+					<tbody id="rankingTableBody">
+						</tbody>
+				</table>
+			</div>
+		</div>
 
         <div id="partidos" class="tab-content">
             <h2>Partidos recientes</h2>
@@ -59,21 +63,21 @@
     </main>
 
     <script type="application/json" id="datos">
-        {
-            "generalStats": {
-                "partidosPorMes": [10, 15, 20, 12, 25, 18, 30, 22],
-                "jugadorMasActivo": "Juan Pérez"
-            },
-            "ranking": [
-                { "id_pareja": 1, "jugador1": "Juan", "jugador2": "Ana", "ganados": 10, "perdidos": 2 },
-                { "id_pareja": 2, "jugador1": "Carlos", "jugador2": "Marta", "ganados": 8, "perdidos": 4 }
-            ],
-            "partidos": [
-                { "id_partido": 101, "fecha": "2025-07-30", "pareja1": "Juan/Ana", "pareja2": "Carlos/Marta", "resultado": "6-4, 6-2" },
-                { "id_partido": 102, "fecha": "2025-07-28", "pareja1": "Pedro/Luis", "pareja2": "Juan/Ana", "resultado": "4-6, 6-3, 7-5" }
-            ]
-        }
-    </script>
+		{
+			"generalStats": {
+				"partidosPorMes": [10, 15, 20, 12, 25, 18, 30, 22],
+				"jugadorMasActivo": "Juan Pérez"
+			},
+			"rankingIndividual": [
+				{ "nombre": "Juan Pérez", "pj": 12, "pg": 8, "pe": 1, "pp": 3, "puntos_totales": 160, "puntos_por_partido": 13.33 },
+				{ "nombre": "Ana García", "pj": 10, "pg": 7, "pe": 0, "pp": 3, "puntos_totales": 145, "puntos_por_partido": 14.50 }
+			],
+			"partidos": [
+				{ "id_partido": 101, "fecha": "2025-07-30", "pareja1": "Juan/Ana", "pareja2": "Carlos/Marta", "resultado": "6-4, 6-2" },
+				{ "id_partido": 102, "fecha": "2025-07-28", "pareja1": "Pedro/Luis", "pareja2": "Juan/Ana", "resultado": "4-6, 6-3, 7-5" }
+			]
+		}
+	</script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>

@@ -44,16 +44,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const rankingBody = document.getElementById('rankingTableBody');
-    data.ranking.forEach((pareja, index) => {
-        const row = rankingBody.insertRow();
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${pareja.jugador1} / ${pareja.jugador2}</td>
-            <td>${pareja.ganados}</td>
-            <td>${pareja.perdidos}</td>
-        `;
-    });
+    // Renderizar tabla de clasificación individual
+	const rankingBody = document.getElementById('rankingTableBody');
+	rankingBody.innerHTML = ''; // Limpiar cualquier contenido anterior
+	data.rankingIndividual.forEach((jugador, index) => {
+		const row = rankingBody.insertRow();
+		row.innerHTML = `
+			<td>${index + 1}</td>
+			<td>${jugador.nombre}</td>
+			<td>${jugador.pj}</td>
+			<td>${jugador.pg}</td>
+			<td>${jugador.pe}</td>
+			<td>${jugador.pp}</td>
+			<td>${jugador.puntos_totales}</td>
+			<td>${jugador.puntos_por_partido}</td>
+		`;
+	});
 
     const partidosList = document.getElementById('partidosList');
     data.partidos.forEach(partido => {
