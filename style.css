@@ -119,7 +119,41 @@ h3 {
     color: #1d1d1f;
 }
 
-/* Adaptación para móviles */
+/* ---- Estilos para la opción de tarjetas en móvil ---- */
+.ranking-cards {
+    display: none; /* Ocultar por defecto */
+}
+.player-card {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    position: relative;
+    border: 1px solid #e0e0e0;
+}
+.player-card strong {
+    font-size: 1.2em;
+    font-weight: 600;
+}
+.player-card .position {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #0071e3;
+}
+.player-card .stat {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 0.9em;
+}
+.player-card .stat span:first-child {
+    color: #6e6e73;
+}
+
+/* Adaptación a dispositivos móviles */
 @media (max-width: 768px) {
     nav {
         flex-direction: column;
@@ -142,5 +176,15 @@ h3 {
     }
     .content-block {
         padding: 20px;
+    }
+    
+    /* Mostrar tarjetas y ocultar tabla en pantallas pequeñas */
+    #rankingTableDesktop {
+        display: none;
+    }
+    #rankingCardsMobile {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
 }

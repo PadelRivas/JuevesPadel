@@ -44,24 +44,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Renderizar tabla de clasificación individual
-	const rankingBody = document.getElementById('rankingTableBody');
-	rankingBody.innerHTML = ''; // Limpiar cualquier contenido anterior
-	data.rankingIndividual.forEach((jugador, index) => {
-		const row = rankingBody.insertRow();
-		row.innerHTML = `
-			<td>${index + 1}</td>
-			<td>${jugador.nombre}</td>
-			<td>${jugador.pj}</td>
-			<td>${jugador.pg}</td>
-			<td>${jugador.pe}</td>
-			<td>${jugador.pp}</td>
-			<td>${jugador.puntos_totales}</td>
-			<td>${jugador.puntos_por_partido}</td>
-		`;
-	});
+    // Renderizar la tabla de clasificación (escritorio)
+    const rankingBody = document.getElementById('rankingTableBody');
+    rankingBody.innerHTML = ''; // Limpiar cualquier contenido anterior
+    data.rankingIndividual.forEach((jugador, index) => {
+        const row = rankingBody.insertRow();
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${jugador.nombre}</td>
+            <td>${jugador.pj}</td>
+            <td>${jugador.pg}</td>
+            <td>${jugador.pe}</td>
+            <td>${jugador.pp}</td>
+            <td>${jugador.puntos_totales}</td>
+            <td>${jugador.puntos_por_partido}</td>
+        `;
+    });
+
+    // Renderizar las tarjetas de clasificación (móvil)
+    const rankingCards = document.getElementById('rankingCardsMobile');
+    rankingCards.innerHTML = ''; // Limpiar cualquier contenido anterior
+    data.rankingIndividual.forEach((jugador, index) => {
+        const card = document.createElement('div');
+        card.className = 'player-card';
+        card.innerHTML = `
+            <div class="position">${index + 1}</div>
+            <strong>${jugador.nombre}</strong>
+            <div class="stat"><span>Partidos Jugados:</span><span>${jugador.pj}</span></div>
+            <div class="stat"><span>Partidos Ganados:</span><span>${jugador.pg}</span></div>
+            <div class="stat"><span>Partidos Empatados:</span><span>${jugador.pe}</span></div>
+            <div class="stat"><span>Partidos Perdidos:</span><span>${jugador.pp}</span></div>
+            <div class="stat"><span>Puntos:</span><span>${jugador.puntos_totales}</span></div>
+            <div class="stat"><span>Puntos por partido:</span><span>${jugador.puntos_por_partido}</span></div>
+        `;
+        rankingCards.appendChild(card);
+    });
 
     const partidosList = document.getElementById('partidosList');
+    partidosList.innerHTML = '';
     data.partidos.forEach(partido => {
         const matchCard = document.createElement('div');
         matchCard.className = 'match-card';
