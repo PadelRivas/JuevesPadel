@@ -1,132 +1,363 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Resultados Pádel - Móvil</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 10px; padding:0; }
-    h2 { font-size: 1.2em; margin-top: 15px; }
-    .section { margin-bottom: 20px; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
-    th, td { border: 1px solid #ccc; padding: 6px 8px; }
-    th { background: #eee; }
-    @media (max-width:600px) {
-      body { font-size: 14px; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Resultados Pádel - Móvil con Gráficos y Pestañas</title>
+<style>
+  /* Reset y base */
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #00aaff, #004466);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  h1 {
+    margin: 15px 0 20px 0;
+    font-weight: 700;
+    font-size: 2rem;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+    text-align: center;
+    letter-spacing: 1.2px;
+  }
+
+  #tab-container {
+    width: 100%;
+    max-width: 480px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    overflow-x: auto;
+  }
+
+  /* Tabs styles */
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid #00ffff;
+  }
+
+  .tab-button {
+    flex-grow: 1;
+    padding: 12px 0;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #b0f0ff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .tab-button:hover {
+    background: rgba(0, 255, 255, 0.2);
+  }
+
+  .tab-button.active {
+    background-color: #00ffff;
+    color: #004466;
+    font-weight: 700;
+  }
+
+  .tab-content {
+    padding: 15px 20px;
+    color: #e0ffff;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+    border-left: 5px solid #00ffff;
+    padding-left: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    font-size: 1rem;
+    background: #002233cc;
+    border-radius:12px;
+    overflow: hidden;
+    box-shadow: 0 1px 6px #005577cc;
+  }
+
+  thead tr {
+    background: linear-gradient(90deg, #00d4ff, #006bb3);
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+  }
+
+  th, td {
+    padding: 12px 10px;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    background: #004466dd;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+    cursor: default;
+  }
+
+  tbody tr:hover {
+    background: #00eeeecc;
+    color: #003;
+    box-shadow: 0 0 12px #22ffffcc;
+    font-weight: 700;
+  }
+
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 0;
+  }
+
+  li {
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 7px 12px;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 3px 6px rgba(0,255,255,0.3);
+    transition: background 0.3s ease;
+  }
+
+  li:hover {
+    background: rgba(0,255,255,0.35);
+    color: #003;
+    font-weight: 700;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    body {
+      padding: 10px 8px;
     }
-  </style>
+
+    h1 {
+      font-size: 1.6rem;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+    }
+
+    th, td {
+      padding: 8px 6px;
+      font-size: 0.85rem;
+    }
+
+    li {
+      font-size: 0.85rem;
+      padding: 6px 10px;
+    }
+  }
+</style>
 </head>
 <body>
 
-  <h1>Resultados y Métricas Pádel</h1>
+<h1>Resultados y Métricas Pádel</h1>
 
-  <!-- Contenedor principal -->
-  <div id="app">
+<div id="tab-container">
+  <nav class="tabs">
+    <button class="tab-button active" data-tab="metricas">Métricas</button>
+    <button class="tab-button" data-tab="partidos">Partidos</button>
+    <button class="tab-button" data-tab="grafico">Gráfico</button>
+  </nav>
 
-    <div class="section" id="metricas-section">
-      <h2>Métricas Generales</h2>
-      <p id="total-partidos"></p>
-      <h3>Top Jugadores</h3>
-      <ul id="top-jugadores-list"></ul>
-    </div>
-
-    <div class="section" id="partidos-section">
-      <h2>Partidos Recientes</h2>
-      <table id="tabla-partidos">
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Equipo 1</th>
-            <th>Equipo 2</th>
-            <th>Ganador</th>
-            <th>Sets</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
+  <div class="tab-content" id="metricas" style="display:block;">
+    <h2>Métricas Generales</h2>
+    <p id="total-partidos"></p>
+    <h3>Top Jugadores</h3>
+    <ul id="top-jugadores-list"></ul>
   </div>
 
-  <!-- Datos embebidos en JSON -->
-  <script type="application/json" id="datos">
-  {
-	  "jugadores": [
-		{"id_jugador":1,"nombre":"Juan Perez"},
-		{"id_jugador":2,"nombre":"Ana Lopez"}
-	  ],
-	  "parejas": [
-		{"id_pareja":1,"jugador1":"Juan Perez","jugador2":"Ana Lopez"}
-	  ],
-	  "partidos": [
-		{
-		  "id_partido":1,
-		  "fecha":"2025-08-06",
-		  "equipo1":[{"jugador1":"Juan Perez","jugador2":"Ana Lopez"}],
-		  "equipo2":[{"jugador1":"Luis","jugador2":"Marta"}],
-		  "resultado":{"ganador":"Equipo 1", "sets":[[6,3],[4,6],[7,5]]}
-		}
-	  ],
-	  "metricas": {
-		"total_partidos_jugados": 120,
-		"top_jugadores": [
-		  {"nombre":"Juan Perez","victorias":45},
-		  {"nombre":"Ana Lopez","victorias":40}
-		]
-	  }
-   }
-  </script>
+  <div class="tab-content" id="partidos" style="display:none;">
+    <h2>Partidos Recientes</h2>
+    <table id="tabla-partidos">
+      <thead><tr><th>Fecha</th><th>Equipo 1</th><th>Equipo 2</th><th>Ganador</th><th>Sets</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
-  <script>
-    // Función para leer y mostrar los datos
-    function renderDatos() {
-      const datos = JSON.parse(document.getElementById('datos').textContent)
-      // Métricas generales
-      document.getElementById('total-partidos').textContent = 'Total partidos jugados: ' + (datos.metricas.total_partidos_jugados || 'N/D')
+  <div class="tab-content" id="grafico" style="display:none;">
+    <h2>Victorias por Jugador</h2>
+    <canvas id="victoriasChart" width="400" height="300"></canvas>
+  </div>
+</div>
 
-      const topJugadoresList = document.getElementById('top-jugadores-list')
-      topJugadoresList.innerHTML = ''
-      if(datos.metricas.top_jugadores && datos.metricas.top_jugadores.length) {
-        datos.metricas.top_jugadores.forEach(j => {
-          const li = document.createElement('li')
-          li.textContent = `${j.nombre} - Victorias: ${j.victorias}`
-          topJugadoresList.appendChild(li)
-        })
-      } else {
-        topJugadoresList.innerHTML = '<li>No hay datos</li>'
+<!-- Datos embebidos en JSON -->
+<script type="application/json" id="datos">
+{
+  "jugadores": [
+    {"id_jugador": 1, "nombre": "Juan Pérez"},
+    {"id_jugador": 2, "nombre": "Ana López"},
+    {"id_jugador": 3, "nombre": "Luis García"},
+    {"id_jugador": 4, "nombre": "Marta Ruiz"}
+  ],
+  "parejas": [
+    {"id_pareja": 1, "jugador1": "Juan Pérez", "jugador2": "Ana López"},
+    {"id_pareja": 2, "jugador1": "Luis García", "jugador2": "Marta Ruiz"}
+  ],
+  "partidos": [
+    {
+      "id_partido": 1,
+      "fecha": "2025-08-01",
+      "equipo1": [{"jugador1": "Juan Pérez", "jugador2": "Ana López"}],
+      "equipo2": [{"jugador1": "Luis García", "jugador2": "Marta Ruiz"}],
+      "resultado": {
+        "ganador": "Equipo 2",
+        "sets": [
+          [4, 6],
+          [6, 3],
+          [2, 6]
+        ]
       }
-
-      // Partidos recientes
-      const tablaCuerpo = document.querySelector('#tabla-partidos tbody')
-      tablaCuerpo.innerHTML = ''
-      if(datos.partidos.length > 0) {
-        datos.partidos.forEach(p => {
-          const tr = document.createElement('tr')
-
-          // Equipos como texto sencillo
-          const equipo1 = p.equipo1.map(eq => `${eq.jugador1} & ${eq.jugador2}`).join(' / ')
-          const equipo2 = p.equipo2.map(eq => `${eq.jugador1} & ${eq.jugador2}`).join(' / ')
-
-          // Sets como string
-          const setsStr = p.resultado && p.resultado.sets
-            ? p.resultado.sets.map(s => s.join('-')).join(', ')
-            : 'N/D'
-
-          tr.innerHTML = `
-            <td>${p.fecha}</td>
-            <td>${equipo1}</td>
-            <td>${equipo2}</td>
-            <td>${p.resultado && p.resultado.ganador ? p.resultado.ganador : 'N/D'}</td>
-            <td>${setsStr}</td>
-          `
-          tablaCuerpo.appendChild(tr)
-        })
-      } else {
-        tablaCuerpo.innerHTML = '<tr><td colspan="5">No hay partidos</td></tr>'
+    },
+    {
+      "id_partido": 2,
+      "fecha": "2025-08-05",
+      "equipo1": [{"jugador1": "Juan Pérez", "jugador2": "Ana López"}],
+      "equipo2": [{"jugador1": "Luis García", "jugador2": "Marta Ruiz"}],
+      "resultado": {
+        "ganador": "Equipo 1",
+        "sets": [
+          [6, 2],
+          [6, 4]
+        ]
       }
     }
-    
-    renderDatos()
-  </script>
+  ],
+  "metricas": {
+    "total_partidos_jugados": 25,
+    "top_jugadores": [
+      {"nombre": "Juan Pérez", "victorias": 15},
+      {"nombre": "Ana López", "victorias": 15},
+      {"nombre": "Luis García", "victorias": 10},
+      {"nombre": "Marta Ruiz", "victorias": 10}
+    ]
+  }
+}
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Manejo de pestañas
+  document.querySelectorAll('.tab-button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).style.display = 'block';
+    });
+  });
+
+  // Función para leer y mostrar los datos
+  function renderDatos() {
+    const datos = JSON.parse(document.getElementById('datos').textContent)
+    // Métricas generales
+    document.getElementById('total-partidos').textContent = 'Total partidos jugados: ' + (datos.metricas.total_partidos_jugados || 'N/D')
+
+    const topJugadoresList = document.getElementById('top-jugadores-list')
+    topJugadoresList.innerHTML = ''
+    if(datos.metricas.top_jugadores && datos.metricas.top_jugadores.length) {
+      datos.metricas.top_jugadores.forEach(j => {
+        const li = document.createElement('li')
+        li.textContent = `${j.nombre} - Victorias: ${j.victorias}`
+        topJugadoresList.appendChild(li)
+      })
+    } else {
+      topJugadoresList.innerHTML = '<li>No hay datos</li>'
+    }
+
+    // Partidos recientes
+    const tablaCuerpo = document.querySelector('#tabla-partidos tbody')
+    tablaCuerpo.innerHTML = ''
+    if(datos.partidos.length > 0) {
+      datos.partidos.forEach(p => {
+        const tr = document.createElement('tr')
+
+        // Equipos como texto sencillo
+        const equipo1 = p.equipo1.map(eq => `${eq.jugador1} & ${eq.jugador2}`).join(' / ')
+        const equipo2 = p.equipo2.map(eq => `${eq.jugador1} & ${eq.jugador2}`).join(' / ')
+
+        // Sets como string
+        const setsStr = p.resultado && p.resultado.sets
+          ? p.resultado.sets.map(s => s.join('-')).join(', ')
+          : 'N/D'
+
+        tr.innerHTML = `
+          <td>${p.fecha}</td>
+          <td>${equipo1}</td>
+          <td>${equipo2}</td>
+          <td>${p.resultado && p.resultado.ganador ? p.resultado.ganador : 'N/D'}</td>
+          <td>${setsStr}</td>
+        `
+        tablaCuerpo.appendChild(tr)
+      })
+    } else {
+      tablaCuerpo.innerHTML = '<tr><td colspan="5">No hay partidos</td></tr>'
+    }
+
+    // Gráfico con Chart.js
+    const ctx = document.getElementById('victoriasChart').getContext('2d');
+    const nombres = []
+    const victorias = []
+    if(datos.metricas.top_jugadores) {
+      datos.metricas.top_jugadores.forEach(j => {
+        nombres.push(j.nombre)
+        victorias.push(j.victorias)
+      })
+    }
+
+    if(window.victoriasChartInstance) {
+      window.victoriasChartInstance.destroy();
+    }
+
+    window.victoriasChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: nombres,
+        datasets: [{
+          label: 'Victorias',
+          data: victorias,
+          backgroundColor: 'rgba(0,255,255,0.7)',
+          borderColor: 'rgba(0,255,255,0.9)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#d0ffff' }
+          },
+          x: {
+            ticks: { color: '#d0ffff' }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: '#d0ffff' } }
+        }
+      }
+    })
+  }
+
+  renderDatos()
+</script>
+
 </body>
 </html>
