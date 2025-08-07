@@ -8,47 +8,55 @@
 </head>
 <body>
     <header>
-        <h1>Liga de Pádel</h1>
+        <nav>
+            <span class="logo">Pádel</span>
+            <div class="tabs">
+                <button class="tab-button active" onclick="openTab('general')">Estadísticas</button>
+                <button class="tab-button" onclick="openTab('ranking')">Clasificación</button>
+                <button class="tab-button" onclick="openTab('partidos')">Partidos</button>
+            </div>
+        </nav>
     </header>
 
-    <div class="tabs">
-        <button class="tab-button active" onclick="openTab('general')">Estadísticas</button>
-        <button class="tab-button" onclick="openTab('ranking')">Clasificación</button>
-        <button class="tab-button" onclick="openTab('partidos')">Partidos</button>
-    </div>
-
-    <div id="general" class="tab-content active">
-        <h2>Estadísticas Generales</h2>
-        <div class="chart-container">
-            <canvas id="partidosJugadosChart"></canvas>
-        </div>
-        <div class="stats-card">
-            <h3>Jugador más activo</h3>
-            <p id="mostActivePlayer"></p>
-        </div>
-    </div>
-
-    <div id="ranking" class="tab-content">
-        <h2>Clasificación de Parejas</h2>
-        <table class="ranking-table">
-            <thead>
-                <tr>
-                    <th>Posición</th>
-                    <th>Pareja</th>
-                    <th>Partidos Ganados</th>
-                    <th>Partidos Perdidos</th>
-                </tr>
-            </thead>
-            <tbody id="rankingTableBody">
-                </tbody>
-        </table>
-    </div>
-
-    <div id="partidos" class="tab-content">
-        <h2>Detalle de Partidos</h2>
-        <div id="partidosList">
+    <main>
+        <div id="general" class="tab-content active">
+            <h2>Estadísticas Generales</h2>
+            <div class="content-block">
+                <h3>Partidos por mes</h3>
+                <div class="chart-container">
+                    <canvas id="partidosJugadosChart"></canvas>
+                </div>
             </div>
-    </div>
+            <div class="content-block">
+                <h3>Jugador más activo</h3>
+                <p id="mostActivePlayer"></p>
+            </div>
+        </div>
+
+        <div id="ranking" class="tab-content">
+            <h2>Clasificación de Parejas</h2>
+            <div class="content-block">
+                <table class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>Posición</th>
+                            <th>Pareja</th>
+                            <th>Ganados</th>
+                            <th>Perdidos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingTableBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="partidos" class="tab-content">
+            <h2>Partidos recientes</h2>
+            <div id="partidosList" class="content-block">
+                </div>
+        </div>
+    </main>
 
     <script type="application/json" id="datos">
         {

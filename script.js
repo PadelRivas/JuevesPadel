@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Función para cambiar de pestaña
     window.openTab = (tabName) => {
         const tabs = document.querySelectorAll('.tab-content');
         tabs.forEach(tab => tab.style.display = 'none');
@@ -11,17 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector(`.tab-button[onclick="openTab('${tabName}')"]`).classList.add('active');
     };
 
-    // Abre la primera pestaña por defecto
     openTab('general');
 
-    // **Leer los datos del JSON incrustado en el HTML**
     const datosScript = document.getElementById('datos');
     const data = JSON.parse(datosScript.textContent);
 
-    // Renderizar estadísticas generales
     document.getElementById('mostActivePlayer').textContent = data.generalStats.jugadorMasActivo;
 
-    // Crear gráfico con Chart.js
     const ctx = document.getElementById('partidosJugadosChart').getContext('2d');
     new Chart(ctx, {
         type: 'bar',
@@ -30,21 +25,25 @@ document.addEventListener('DOMContentLoaded', () => {
             datasets: [{
                 label: 'Partidos Jugados',
                 data: data.generalStats.partidosPorMes,
-                backgroundColor: 'rgba(0, 200, 83, 0.7)',
-                borderColor: 'rgba(0, 200, 83, 1)',
+                backgroundColor: 'rgba(0, 113, 227, 0.7)',
+                borderColor: 'rgba(0, 113, 227, 1)',
                 borderWidth: 1
             }]
         },
         options: {
             responsive: true,
             scales: {
-                y: { beginAtZero: true, grid: { color: '#333' } },
-                x: { grid: { color: '#333' } }
+                y: { beginAtZero: true, grid: { color: '#e0e0e0' } },
+                x: { grid: { color: '#e0e0e0' } }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
             }
         }
     });
 
-    // Renderizar tabla de clasificación
     const rankingBody = document.getElementById('rankingTableBody');
     data.ranking.forEach((pareja, index) => {
         const row = rankingBody.insertRow();
@@ -56,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     });
 
-    // Renderizar lista de partidos
     const partidosList = document.getElementById('partidosList');
     data.partidos.forEach(partido => {
         const matchCard = document.createElement('div');

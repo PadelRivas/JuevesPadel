@@ -1,85 +1,146 @@
+/* Usamos una tipografía similar a la de Apple, como San Francisco */
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('https://apple-fonts.s3.amazonaws.com/SF-Pro-Display-Regular.otf');
+    font-weight: 400;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #121212;
-    color: #e0e0e0;
+    font-family: 'SF Pro Display', Arial, sans-serif;
+    background-color: #f5f5f7;
+    color: #1d1d1f;
     margin: 0;
     padding: 0;
 }
 header {
-    background-color: #1f1f1f;
-    padding: 20px;
-    text-align: center;
-    border-bottom: 2px solid #00c853;
+    background-color: #fff;
+    border-bottom: 1px solid #d2d2d7;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+nav {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    font-size: 24px;
+    font-weight: 600;
 }
 .tabs {
     display: flex;
-    justify-content: center;
-    background-color: #1f1f1f;
-    padding: 10px 0;
+    gap: 15px;
 }
 .tab-button {
-    background-color: #333;
+    background: none;
     border: none;
-    color: #e0e0e0;
-    padding: 10px 20px;
-    margin: 0 5px;
+    color: #6e6e73;
+    padding: 10px 15px;
     cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+    font-size: 16px;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+.tab-button:hover {
+    color: #1d1d1f;
 }
 .tab-button.active {
-    background-color: #00c853;
+    color: #1d1d1f;
+    font-weight: 600;
+    border-bottom: 2px solid #0071e3;
+}
+main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 20px;
 }
 .tab-content {
     display: none;
-    padding: 20px;
 }
 .tab-content.active {
     display: block;
 }
+h2 {
+    font-size: 40px;
+    font-weight: 700;
+    text-align: center;
+    margin: 40px 0;
+}
+h3 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.content-block {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
 .chart-container {
     width: 100%;
-    max-width: 600px;
-    margin: 20px auto;
-}
-.stats-card {
-    background-color: #1f1f1f;
-    border-left: 5px solid #00c853;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 5px;
 }
 .ranking-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
 }
 .ranking-table th, .ranking-table td {
-    padding: 12px;
+    padding: 15px;
     text-align: left;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #d2d2d7;
 }
 .ranking-table th {
-    background-color: #1f1f1f;
-    color: #00c853;
+    font-weight: 600;
+    color: #6e6e73;
 }
 .match-card {
-    background-color: #1f1f1f;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
+    border-bottom: 1px solid #d2d2d7;
+    padding: 15px 0;
+}
+.match-card:last-child {
+    border-bottom: none;
+}
+.match-card h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+}
+.match-card p {
+    margin: 0;
+    color: #6e6e73;
+}
+.match-card strong {
+    font-size: 16px;
+    color: #1d1d1f;
 }
 
 /* Adaptación para móviles */
-@media (max-width: 600px) {
-    .tabs {
+@media (max-width: 768px) {
+    nav {
         flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    .tabs {
+        flex-wrap: wrap;
+        justify-content: center;
     }
     .tab-button {
-        width: 100%;
-        margin-bottom: 5px;
+        padding: 8px 12px;
+        font-size: 14px;
     }
-    .ranking-table, .stats-card, .match-card {
-        font-size: 0.9em;
+    h2 {
+        font-size: 32px;
+    }
+    h3 {
+        font-size: 20px;
+    }
+    .content-block {
+        padding: 20px;
     }
 }
