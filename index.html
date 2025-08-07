@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resultados Pádel - Móvil</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 10px; padding:0; }
+    h2 { font-size: 1.2em; margin-top: 15px; }
+    .section { margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+    th, td { border: 1px solid #ccc; padding: 6px 8px; }
+    th { background: #eee; }
+    @media (max-width:600px) {
+      body { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Resultados y Métricas Pádel</h1>
+
+  <!-- Contenedor principal -->
+  <div id="app">
+
+    <div class="section" id="metricas-section">
+      <h2>Métricas Generales</h2>
+      <p id="total-partidos"></p>
+      <h3>Top Jugadores</h3>
+      <ul id="top-jugadores-list"></ul>
+    </div>
+
+    <div class="section" id="partidos-section">
+      <h2>Partidos Recientes</h2>
+      <table id="tabla-partidos">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Equipo 1</th>
+            <th>Equipo 2</th>
+            <th>Ganador</th>
+            <th>Sets</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Datos embebidos en JSON -->
+  <script type="application/json" id="datos">
+  {
+    "jugadores": [],
+    "parejas": [],
+    "partidos": [],
+    "metricas": {}
+  }
+  </script>
+
+  <script>
+    // Función para leer y mostrar los datos
+    function renderDatos() {
+      const datos = JSON.parse(document.getElementById('datos').textContent)
+      // Métricas generales
+      document.getElementById('total-partidos').textContent = 'Total partidos jugados: ' + (datos.metricas.total_partidos_jugados || 'N/D')
+
+      const topJugadoresList = document.getElementById('top-jugadores-list')
+      topJugadoresList.innerHTML = ''
+      if(datos.metricas.top_jugadores && datos.metricas.top_jugadores.length) {
+        datos.metricas.top_jugadores.forEach(j => {
+          const li = document.createElement('li')
+          li.textContent = `${j.nombre} - Victorias: ${j.victorias}`
+          topJugadoresList.appendChild(li)
+        })
+      } else {
+        topJugadoresList.innerHTML = '<li>No hay datos</li>'
+      }
+
+      // Partidos recientes
+      const tablaCuerpo = document.querySelector('#tabla-partidos tbody')
+      tablaCuerpo.innerHTML = ''
+      if(datos.partidos.length > 0) {
+        datos.partidos.forEach(p => {
+          const tr = document.createElement('tr')
+
+          // Equipos como texto sencillo
+          const equipo1 = p.equipo1.map(eq => `${eq.jugador1} & ${eq.jugador2}`).join(' / ')
+          const equipo2 = p.equipo2.map(eq => `${eq.jugador1} & ${eq.jugador2}`).join(' / ')
+
+          // Sets como string
+          const setsStr = p.resultado && p.resultado.sets
+            ? p.resultado.sets.map(s => s.join('-')).join(', ')
+            : 'N/D'
+
+          tr.innerHTML = `
+            <td>${p.fecha}</td>
+            <td>${equipo1}</td>
+            <td>${equipo2}</td>
+            <td>${p.resultado && p.resultado.ganador ? p.resultado.ganador : 'N/D'}</td>
+            <td>${setsStr}</td>
+          `
+          tablaCuerpo.appendChild(tr)
+        })
+      } else {
+        tablaCuerpo.innerHTML = '<tr><td colspan="5">No hay partidos</td></tr>'
+      }
+    }
+    
+    renderDatos()
+  </script>
+	<script type="application/json" id="datos">
+	{
+	  "jugadores": [
+		{"id_jugador":1,"nombre":"Juan Perez"},
+		{"id_jugador":2,"nombre":"Ana Lopez"}
+	  ],
+	  "parejas": [
+		{"id_pareja":1,"jugador1":"Juan Perez","jugador2":"Ana Lopez"}
+	  ],
+	  "partidos": [
+		{
+		  "id_partido":1,
+		  "fecha":"2025-08-06",
+		  "equipo1":[{"jugador1":"Juan Perez","jugador2":"Ana Lopez"}],
+		  "equipo2":[{"jugador1":"Luis","jugador2":"Marta"}],
+		  "resultado":{"ganador":"Equipo 1", "sets":[[6,3],[4,6],[7,5]]}
+		}
+	  ],
+	  "metricas": {
+		"total_partidos_jugados": 120,
+		"top_jugadores": [
+		  {"nombre":"Juan Perez","victorias":45},
+		  {"nombre":"Ana Lopez","victorias":40}
+		]
+	  }
+	}
+	</script>
+</body>
+</html>
