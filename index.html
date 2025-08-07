@@ -51,11 +51,30 @@
   <!-- Datos embebidos en JSON -->
   <script type="application/json" id="datos">
   {
-    "jugadores": [],
-    "parejas": [],
-    "partidos": [],
-    "metricas": {}
-  }
+	  "jugadores": [
+		{"id_jugador":1,"nombre":"Juan Perez"},
+		{"id_jugador":2,"nombre":"Ana Lopez"}
+	  ],
+	  "parejas": [
+		{"id_pareja":1,"jugador1":"Juan Perez","jugador2":"Ana Lopez"}
+	  ],
+	  "partidos": [
+		{
+		  "id_partido":1,
+		  "fecha":"2025-08-06",
+		  "equipo1":[{"jugador1":"Juan Perez","jugador2":"Ana Lopez"}],
+		  "equipo2":[{"jugador1":"Luis","jugador2":"Marta"}],
+		  "resultado":{"ganador":"Equipo 1", "sets":[[6,3],[4,6],[7,5]]}
+		}
+	  ],
+	  "metricas": {
+		"total_partidos_jugados": 120,
+		"top_jugadores": [
+		  {"nombre":"Juan Perez","victorias":45},
+		  {"nombre":"Ana Lopez","victorias":40}
+		]
+	  }
+   }
   </script>
 
   <script>
@@ -109,32 +128,5 @@
     
     renderDatos()
   </script>
-	<script type="application/json" id="datos">
-	{
-	  "jugadores": [
-		{"id_jugador":1,"nombre":"Juan Perez"},
-		{"id_jugador":2,"nombre":"Ana Lopez"}
-	  ],
-	  "parejas": [
-		{"id_pareja":1,"jugador1":"Juan Perez","jugador2":"Ana Lopez"}
-	  ],
-	  "partidos": [
-		{
-		  "id_partido":1,
-		  "fecha":"2025-08-06",
-		  "equipo1":[{"jugador1":"Juan Perez","jugador2":"Ana Lopez"}],
-		  "equipo2":[{"jugador1":"Luis","jugador2":"Marta"}],
-		  "resultado":{"ganador":"Equipo 1", "sets":[[6,3],[4,6],[7,5]]}
-		}
-	  ],
-	  "metricas": {
-		"total_partidos_jugados": 120,
-		"top_jugadores": [
-		  {"nombre":"Juan Perez","victorias":45},
-		  {"nombre":"Ana Lopez","victorias":40}
-		]
-	  }
-	}
-	</script>
 </body>
 </html>
