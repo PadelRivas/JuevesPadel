@@ -22,6 +22,18 @@ header {
     border-bottom: 2px solid #c5cae9;
     padding: 0;
     margin-bottom: 2rem;
+    /* Mejora para móviles: hace que las pestañas sean desplazables */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tabs::-webkit-scrollbar {
+    height: 4px;
+}
+
+.tabs::-webkit-scrollbar-thumb {
+    background-color: #c5cae9;
+    border-radius: 2px;
 }
 
 .tab-button {
@@ -34,6 +46,8 @@ header {
     color: #3f51b5;
     transition: background-color 0.3s, color 0.3s;
     border-radius: 5px 5px 0 0;
+    /* Asegura que los botones no se achiquen */
+    flex-shrink: 0;
 }
 
 .tab-button:hover {
@@ -99,8 +113,10 @@ select {
     font-size: 1rem;
 }
 
+/* --- Adaptación para tablas en móviles --- */
 .table-container {
-    overflow-x: auto;
+    overflow-x: auto; /* Activa el desplazamiento horizontal */
+    -webkit-overflow-scrolling: touch; /* Mejora el "feeling" del desplazamiento en iOS */
     margin-top: 1rem;
 }
 
@@ -108,6 +124,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9rem;
+    /* La tabla no se achicará más de lo necesario */
     min-width: 600px;
 }
 
@@ -120,6 +137,8 @@ th, td {
     text-align: left;
     padding: 12px;
     border-bottom: 1px solid #ddd;
+    /* Mantener el espacio entre celdas */
+    white-space: nowrap;
 }
 
 tbody tr:hover {
@@ -136,4 +155,34 @@ tbody tr:hover {
     padding: 10px;
     margin-bottom: 8px;
     border-radius: 4px;
+}
+
+/* --- Media query para ajustar el diseño en pantallas pequeñas --- */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+
+    .content-container {
+        padding: 1rem;
+    }
+
+    h2, h3 {
+        font-size: 1.5rem;
+    }
+
+    .tabs {
+        justify-content: flex-start; /* Alinea las pestañas a la izquierda */
+    }
+
+    .tab-button {
+        font-size: 0.9rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .history-filters {
+        flex-direction: column; /* Apila los filtros verticalmente */
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
 }
