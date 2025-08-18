@@ -69,17 +69,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isWinner) {
             return 20;
         } else if (isTie) {
-            let setsWon = matchSets.filter(s => {
-                if (playerTeam === 1) return s.juegos_equipo1 > s.juegos_equipo2;
-                else return s.juegos_equipo2 > s.juegos_equipo1;
-            }).length;
-            return setsWon;
+            let totalGamesWon = 0;
+            matchSets.forEach(s => {
+                if (playerTeam === 1) totalGamesWon += s.juegos_equipo1;
+                else totalGamesWon += s.juegos_equipo2;
+            });
+            return totalGamesWon;
         } else { // Derrota
-            let setsWon = matchSets.filter(s => {
-                if (playerTeam === 1) return s.juegos_equipo1 > s.juegos_equipo2;
-                else return s.juegos_equipo2 > s.juegos_equipo1;
-            }).length;
-            return setsWon;
+            let totalGamesWon = 0;
+            matchSets.forEach(s => {
+                if (playerTeam === 1) totalGamesWon += s.juegos_equipo1;
+                else totalGamesWon += s.juegos_equipo2;
+            });
+            return totalGamesWon;
         }
     };
 
@@ -96,8 +98,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 ties: 0,
                 totalPoints: 0,
                 pointsPerMatch: 0,
-                winStreak: 0,
-                lossStreak: 0,
+                // Nuevas propiedades para rastrear las rachas
+                currentWinStreak: 0,
+                maxWinStreak: 0,
+                currentLossStreak: 0,
+                maxLossStreak: 0,
                 setsWon: 0,
                 setsLost: 0,
                 gamesWon: 0,
@@ -129,16 +134,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     if (matchResult.equipo_ganador === mp.equipo) {
                         stats.wins++;
-                        stats.winStreak = (stats.winStreak || 0) + 1;
-                        stats.lossStreak = 0;
+                        stats.currentWinStreak++;
+                        stats.currentLossStreak = 0;
                     } else if (matchResult.equipo_ganador === 0) {
                         stats.ties++;
-                        stats.winStreak = 0;
-                        stats.lossStreak = 0;
+                        stats.currentWinStreak = 0;
+                        stats.currentLossStreak = 0;
                     } else {
                         stats.losses++;
-                        stats.lossStreak = (stats.lossStreak || 0) + 1;
-                        stats.winStreak = 0;
+                        stats.currentLossStreak++;
+                        stats.currentWinStreak = 0;
+                    }
+
+                    // Actualizar las rachas máximas
+                    if (stats.currentWinStreak > stats.maxWinStreak) {
+                        stats.maxWinStreak = stats.currentWinStreak;
+                    }
+                    if (stats.currentLossStreak > stats.maxLossStreak) {
+                        stats.maxLossStreak = stats.currentLossStreak;
                     }
 
                     const matchSets = sets.filter(s => s.id_partido === match.id_partido);
@@ -205,19 +218,43 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- PESTAÑA JUGADOR ---
-    const renderPlayerProfile = () => {
-        // En un entorno real, seleccionarías un jugador (ej. a través de un URL param)
-        // Para este demo, usaremos el primer jugador de la lista
-        const player = playersStats[0]; 
-        if (!player) return;
+    const playerSelect = document.getElementById('player-select');
+    
+    // Función para renderizar el perfil de un jugador específico
+    const renderPlayerProfile = (playerId) => {
+        const player = playersStats.find(p => p.id_jugador === playerId);
+        if (!player) {
+            document.getElementById('player-profile-container').innerHTML = `<p>Selecciona un jugador para ver sus estadísticas.</p>`;
+            return;
+        }
 
-        document.getElementById('player-name').textContent = player.nombre;
         const container = document.getElementById('player-profile-container');
-        
-        // Rendimiento con Parejas
-        const partnerStats = getPartnerStats(player.id_jugador);
+        container.innerHTML = `
+            <h3>Resumen de Rendimiento</h3>
+            <p><strong>Puntos totales:</strong> ${player.totalPoints}</p>
+            <p><strong>Puntos por partido:</strong> ${player.pointsPerMatch.toFixed(2)}</p>
+            <p><strong>Partidos jugados:</strong> ${player.matchesPlayed}</p>
+            <p><strong>Racha de victorias más larga:</strong> ${player.maxWinStreak}</p>
+            <p><strong>Racha de derrotas más larga:</strong> ${player.maxLossStreak}</p>
+
+            <hr>
+
+            <h3>Detalle de Sets y Juegos</h3>
+            <p><strong>Sets ganados:</strong> ${player.setsWon} / <strong>Sets perdidos:</strong> ${player.setsLost}</p>
+            <p><strong>Juegos ganados:</strong> ${player.gamesWon} / <strong>Juegos perdidos:</strong> ${player.gamesLost}</p>
+
+            <hr>
+
+            ${getPartnerStatsHTML(player.id_jugador)}
+            ${getRivalStatsHTML(player.id_jugador)}
+        `;
+    };
+    
+    // Funciones que devuelven el HTML para las tablas
+    const getPartnerStatsHTML = (playerId) => {
+        const partnerStats = getPartnerStats(playerId);
         const sortedPartnerStats = partnerStats.sort((a, b) => b.pointsPerMatch - a.pointsPerMatch);
-        const partnerTableHTML = `
+        return `
             <h3>Rendimiento con Parejas</h3>
             <table>
                 <thead>
@@ -242,11 +279,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 </tbody>
             </table>
         `;
+    };
 
-        // Rendimiento contra Rivales
-        const rivalStats = getRivalStats(player.id_jugador);
+    const getRivalStatsHTML = (playerId) => {
+        const rivalStats = getRivalStats(playerId);
         const sortedRivalStats = rivalStats.sort((a, b) => a.pointsPerMatch - b.pointsPerMatch);
-        const rivalTableHTML = `
+        return `
             <h3>Rendimiento contra Rivales</h3>
             <table>
                 <thead>
@@ -271,22 +309,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 </tbody>
             </table>
         `;
-
-        container.innerHTML = `
-            <h3>Resumen de Rendimiento</h3>
-            <p><strong>Puntos totales:</strong> ${player.totalPoints}</p>
-            <p><strong>Puntos por partido:</strong> ${player.pointsPerMatch.toFixed(2)}</p>
-            <p><strong>Partidos jugados:</strong> ${player.matchesPlayed}</p>
-            <p><strong>Récord de Victorias Consecutivas:</strong> ${player.winStreak}</p>
-
-            ${partnerTableHTML}
-            ${rivalTableHTML}
-
-            <h3>Detalle de Sets y Juegos</h3>
-            <p><strong>Sets ganados:</strong> ${player.setsWon} / <strong>Sets perdidos:</strong> ${player.setsLost}</p>
-            <p><strong>Juegos ganados:</strong> ${player.gamesWon} / <strong>Juegos perdidos:</strong> ${player.gamesLost}</p>
-        `;
     };
+
+    // Llenar el select con los jugadores
+    const populatePlayerSelect = () => {
+        playerSelect.innerHTML = '<option value="">Selecciona un jugador</option>' + 
+            players.map(p => `<option value="${p.id_jugador}">${p.nombre}</option>`).join('');
+    };
+
+    // Manejar el evento de cambio del select
+    playerSelect.addEventListener('change', (event) => {
+        const selectedPlayerId = parseInt(event.target.value);
+        if (selectedPlayerId) {
+            renderPlayerProfile(selectedPlayerId);
+        } else {
+            // Si se selecciona la opción por defecto, borra el contenido
+            document.getElementById('player-profile-container').innerHTML = '';
+        }
+    });
 
     const getPartnerStats = (playerId) => {
         const stats = new Map();
@@ -447,10 +487,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const mostPlayedPairIds = mostPlayedPairKey ? mostPlayedPairKey.split('-') : [null, null];
         const mostPlayedPairNames = mostPlayedPairIds.map(id => players.find(p => p.id_jugador == id)?.nombre).join(' y ');
 
-        const allWinStreaks = playersStats.map(p => p.winStreak);
+        const allWinStreaks = playersStats.map(p => p.maxWinStreak);
         const maxWinStreak = Math.max(...allWinStreaks);
 
-        const allLossStreaks = playersStats.map(p => p.lossStreak);
+        const allLossStreaks = playersStats.map(p => p.maxLossStreak);
         const maxLossStreak = Math.max(...allLossStreaks);
         
         // Parejas habituales e inéditas
@@ -542,7 +582,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchDate = new Date(match.fecha);
             const matchMonth = matchDate.getMonth() + 1;
             const selectedMonth = monthFilter.value;
-
             const selectedPlayerId = parseInt(playerFilter.value);
             const selectedResult = resultFilter.value;
 
@@ -550,38 +589,45 @@ document.addEventListener('DOMContentLoaded', () => {
             const isSuspended = matchResult?.equipo_ganador === -1;
             if (isSuspended) return false;
 
-            // Filtro por mes
+            // Filtro por mes (funciona correctamente)
             if (selectedMonth && matchMonth != selectedMonth) return false;
 
-            // Filtro por jugador
+            // --- Lógica de filtrado corregida ---
+            
+            // 1. Lógica para el filtro de jugador
             let playerTeam = null;
             if (selectedPlayerId) {
-                const playerInMatch = match_couples.some(mp => {
-                    if (mp.id_partido === match.id_partido) {
-                        const pair = couples.find(p => p.id_pareja === mp.id_pareja);
-                        if (pair && (pair.id_jugador1 === selectedPlayerId || pair.id_jugador2 === selectedPlayerId)) {
-                             playerTeam = mp.equipo;
-                             return true;
-                        }
-                    }
-                    return false;
+                const playerCoupleData = match_couples.find(mp => {
+                    const pair = couples.find(p => p.id_pareja === mp.id_pareja);
+                    return mp.id_partido === match.id_partido && (pair.id_jugador1 === selectedPlayerId || pair.id_jugador2 === selectedPlayerId);
                 });
-                if (!playerInMatch) return false;
+
+                if (!playerCoupleData) return false; // El jugador no está en este partido
+                playerTeam = playerCoupleData.equipo;
             }
 
-            // Filtro por resultado
-            if (selectedResult && selectedPlayerId) {
-                if (selectedResult === 'won' && matchResult.equipo_ganador !== playerTeam) return false;
-                if (selectedResult === 'lost' && (matchResult.equipo_ganador === playerTeam || matchResult.equipo_ganador === 0)) return false;
-                if (selectedResult === 'tied' && matchResult.equipo_ganador !== 0) return false;
-            } else if (selectedResult && !selectedPlayerId) {
-                 // Si solo se filtra por resultado, se asume que el usuario quiere ver cualquier partido
-                 // con ese resultado, no un resultado específico para un jugador
-                 if (selectedResult === 'won' && matchResult.equipo_ganador === 0) return false;
-                 if (selectedResult === 'lost' && matchResult.equipo_ganador !== 0) return false;
-                 if (selectedResult === 'tied' && matchResult.equipo_ganador !== 0) return false;
+            // 2. Lógica para el filtro de resultado
+            if (selectedResult) {
+                if (selectedPlayerId) {
+                    // Si se ha seleccionado un jugador, filtramos por su resultado
+                    const isPlayerWinner = matchResult.equipo_ganador === playerTeam;
+                    const isPlayerTie = matchResult.equipo_ganador === 0;
+
+                    if (selectedResult === 'won' && !isPlayerWinner) return false;
+                    if (selectedResult === 'tied' && !isPlayerTie) return false;
+                    if (selectedResult === 'lost' && (isPlayerWinner || isPlayerTie)) return false;
+
+                } else {
+                    // Si no se ha seleccionado un jugador, filtramos por el resultado general del partido
+                    if (selectedResult === 'won' && matchResult.equipo_ganador === 0) return false;
+                    if (selectedResult === 'tied' && matchResult.equipo_ganador !== 0) return false;
+                    // 'lost' en un partido sin jugador no tiene sentido, pero para mantener la consistencia
+                    // asumimos que el usuario quiere ver partidos con un ganador/perdedor
+                    if (selectedResult === 'lost' && matchResult.equipo_ganador === 0) return false;
+                }
             }
-            return true;
+            
+            return true; // Si pasa todos los filtros, incluimos el partido
         });
 
         const tableContent = filteredMatches.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)).map(match => {
@@ -651,6 +697,7 @@ document.addEventListener('DOMContentLoaded', () => {
     playerFilter.addEventListener('change', renderHistory);
     resultFilter.addEventListener('change', renderHistory);
 
-    // Renderizar la pestaña inicial por defecto
+    // Renderizar la pestaña inicial por defecto y los filtros de la pestaña de jugador
     renderRanking();
+    populatePlayerSelect();
 });

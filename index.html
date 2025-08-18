@@ -3,75 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estadísticas de Padel</title>
+    <title>Padel - Cuadro de Mando</title>
     <link rel="stylesheet" href="style.css">
-
-    <script>
-        const appData = {
-            jugadores: [
-                { "id_jugador": 1, "nombre": "Carlos" },
-                { "id_jugador": 2, "nombre": "Marta" },
-                { "id_jugador": 3, "nombre": "Juan" },
-                { "id_jugador": 4, "nombre": "Sofía" }
-            ],
-            parejas: [
-                { "id_pareja": 1, "id_jugador1": 1, "id_jugador2": 2 },
-                { "id_pareja": 2, "id_jugador1": 3, "id_jugador2": 4 }
-            ],
-            partidos: [
-                { "id_partido": 1, "fecha": "2025-08-10" },
-                { "id_partido": 2, "fecha": "2025-09-05" }
-            ],
-            partido_pareja: [
-                { "id_partido_pareja": 1, "id_partido": 1, "id_pareja": 1, "equipo": 1 },
-                { "id_partido_pareja": 2, "id_partido": 1, "id_pareja": 2, "equipo": 2 },
-                { "id_partido_pareja": 3, "id_partido": 2, "id_pareja": 1, "equipo": 1 },
-                { "id_partido_pareja": 4, "id_partido": 2, "id_pareja": 2, "equipo": 2 }
-            ],
-            resultados: [
-                { "id_resultado": 1, "id_partido": 1, "equipo_ganador": 1 },
-                { "id_resultado": 2, "id_partido": 2, "equipo_ganador": 0 }
-            ],
-            sets: [
-                { "id_set": 1, "id_partido": 1, "numero_set": 1, "juegos_equipo1": 6, "juegos_equipo2": 4 },
-                { "id_set": 2, "id_partido": 1, "numero_set": 2, "juegos_equipo1": 6, "juegos_equipo2": 3 },
-                { "id_set": 3, "id_partido": 2, "numero_set": 1, "juegos_equipo1": 6, "juegos_equipo2": 4 },
-                { "id_set": 4, "id_partido": 2, "numero_set": 2, "juegos_equipo1": 4, "juegos_equipo2": 6 }
-            ]
-        };
-    </script>
-    <script src="script.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
-        <h1>Estadísticas de Padel</h1>
-        <nav class="tabs">
-            <button class="tab-button active" data-tab="ranking">Clasificación</button>
-            <button class="tab-button" data-tab="player">Jugador</button>
-            <button class="tab-button" data-tab="metrics">Métricas</button>
-            <button class="tab-button" data-tab="history">Historial de Partidos</button>
-        </nav>
+        <h1>Cuadro de Mando</h1>
     </header>
 
-    <main class="tab-content">
-        <section id="ranking" class="tab-pane active">
-            <h2>Clasificación</h2>
+    <div class="tabs">
+        <button class="tab-button active" data-tab="ranking">Clasificación</button>
+        <button class="tab-button" data-tab="player">Jugador</button>
+        <button class="tab-button" data-tab="metrics">Métricas</button>
+        <button class="tab-button" data-tab="history">Historial de Partidos</button>
+    </div>
+
+    <main class="content-container">
+        <div id="ranking" class="tab-pane active">
+            <h2>Clasificación por Puntos</h2>
             <div id="ranking-container" class="table-container"></div>
-        </section>
+        </div>
 
-        <section id="player" class="tab-pane">
-            <h2 id="player-name"></h2>
-            <div id="player-profile-container"></div>
-        </section>
+        <div id="player" class="tab-pane">
+            <h2>Estadísticas del Jugador</h2>
+            <div class="player-controls">
+                <label for="player-select">Selecciona un Jugador:</label>
+                <select id="player-select"></select>
+            </div>
+            <div id="player-profile-container">
+                <p>Selecciona un jugador para ver sus estadísticas.</p>
+            </div>
+        </div>
 
-        <section id="metrics" class="tab-pane">
-            <h2>Métricas</h2>
-            <div id="metrics-container"></div>
-        </section>
+        <div id="metrics" class="tab-pane">
+            <h2>Métricas Generales</h2>
+            <div id="metrics-container" class="metrics-container"></div>
+        </div>
 
-        <section id="history" class="tab-pane">
+        <div id="history" class="tab-pane">
             <h2>Historial de Partidos</h2>
-            <div class="filters">
+            <div class="history-filters">
+                <label for="month-filter">Mes:</label>
                 <select id="month-filter">
                     <option value="">Todos los meses</option>
                     <option value="1">Enero</option>
@@ -87,18 +62,23 @@
                     <option value="11">Noviembre</option>
                     <option value="12">Diciembre</option>
                 </select>
-                <select id="player-filter">
-                    <option value="">Todos los jugadores</option>
-                </select>
+
+                <label for="player-filter">Jugador:</label>
+                <select id="player-filter"></select>
+
+                <label for="result-filter">Resultado:</label>
                 <select id="result-filter">
                     <option value="">Todos los resultados</option>
-                    <option value="won">Ganado</option>
-                    <option value="lost">Perdido</option>
-                    <option value="tied">Empatado</option>
+                    <option value="won">Victoria</option>
+                    <option value="lost">Derrota</option>
+                    <option value="tied">Empate</option>
                 </select>
             </div>
             <div id="history-container" class="table-container"></div>
-        </section>
+        </div>
     </main>
+
+    <script src="backend.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
