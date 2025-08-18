@@ -575,14 +575,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const historyContainer = document.getElementById('history-container');
 
     const renderHistory = () => {
-        // Llenar el filtro de jugadores
+        // --- INICIO DE LA CORRECCIÓN ---
+        // 1. Guarda el valor actual del filtro de jugador
+        const selectedPlayerId = playerFilter.value;
+        // 2. Reconstruye el menú desplegable
         playerFilter.innerHTML = '<option value="">Todos los jugadores</option>' + players.map(p => `<option value="${p.id_jugador}">${p.nombre}</option>`).join('');
+        // 3. Restaura el valor del filtro de jugador
+        playerFilter.value = selectedPlayerId;
+        // --- FIN DE LA CORRECCIÓN ---
 
         const filteredMatches = matches.filter(match => {
             const matchDate = new Date(match.fecha);
             const matchMonth = matchDate.getMonth() + 1;
             const selectedMonth = monthFilter.value;
-            const selectedPlayerId = parseInt(playerFilter.value);
             const selectedResult = resultFilter.value;
 
             const matchResult = results.find(r => r.id_partido === match.id_partido);
@@ -592,9 +597,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Filtro por mes (funciona correctamente)
             if (selectedMonth && matchMonth != selectedMonth) return false;
 
-            // --- Lógica de filtrado corregida ---
-            
-            // 1. Lógica para el filtro de jugador
+            // Lógica para el filtro de jugador
             let playerTeam = null;
             if (selectedPlayerId) {
                 const playerCoupleData = match_couples.find(mp => {
@@ -602,14 +605,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     return mp.id_partido === match.id_partido && (pair.id_jugador1 === selectedPlayerId || pair.id_jugador2 === selectedPlayerId);
                 });
 
-                if (!playerCoupleData) return false; // El jugador no está en este partido
+                if (!playerCoupleData) return false;
                 playerTeam = playerCoupleData.equipo;
             }
 
-            // 2. Lógica para el filtro de resultado
+            // Lógica para el filtro de resultado
             if (selectedResult) {
                 if (selectedPlayerId) {
-                    // Si se ha seleccionado un jugador, filtramos por su resultado
                     const isPlayerWinner = matchResult.equipo_ganador === playerTeam;
                     const isPlayerTie = matchResult.equipo_ganador === 0;
 
@@ -618,16 +620,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (selectedResult === 'lost' && (isPlayerWinner || isPlayerTie)) return false;
 
                 } else {
-                    // Si no se ha seleccionado un jugador, filtramos por el resultado general del partido
                     if (selectedResult === 'won' && matchResult.equipo_ganador === 0) return false;
                     if (selectedResult === 'tied' && matchResult.equipo_ganador !== 0) return false;
-                    // 'lost' en un partido sin jugador no tiene sentido, pero para mantener la consistencia
-                    // asumimos que el usuario quiere ver partidos con un ganador/perdedor
                     if (selectedResult === 'lost' && matchResult.equipo_ganador === 0) return false;
                 }
             }
             
-            return true; // Si pasa todos los filtros, incluimos el partido
+            return true;
         });
 
         const tableContent = filteredMatches.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)).map(match => {
