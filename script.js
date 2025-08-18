@@ -1,4 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Verificar si los datos del backend están disponibles
+    if (typeof appData === 'undefined') {
+        console.error('Los datos del backend no se han cargado (appData no está definido).');
+        return;
+    }
+    
+    // Asignar los datos a variables locales
+    const players = appData.jugadores;
+    const matches = appData.partidos;
+    const sets = appData.sets;
+    const results = appData.resultados;
+    const couples = appData.parejas;
+    const match_couples = appData.partido_pareja;
+
     // --- LÓGICA DE NAVEGACIÓN DE PESTAÑAS ---
     const tabs = document.querySelectorAll('.tab-button');
     const panes = document.querySelectorAll('.tab-pane');
@@ -31,133 +45,125 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- MANEJO DE DATOS Y RENDERIZADO ---
-    if (typeof appData === 'undefined') {
-        console.error('Los datos del backend no se han cargado (appData no está definido).');
-        return;
-    }
-    
-    const players = appData.players;
-    const matches = appData.matches;
-    const sets = appData.sets;
-    const results = appData.results;
+    // --- CÁLCULO DE MÉTRICAS (Lógica de negocio) ---
     
     // Función para calcular puntos de un jugador en un partido
     const calculatePlayerPoints = (playerId, matchId) => {
-        const matchSets = sets.filter(s => s.id_partido === matchId);
         const matchResult = results.find(r => r.id_partido === matchId);
-        const matchPairs = appData.match_pareja.filter(mp => mp.id_partido === matchId);
-        
-        let playerTeam = null;
-        for (const mp of matchPairs) {
-            const pair = appData.parejas.find(p => p.id_pareja === mp.id_pareja);
-            if (pair.id_jugador1 === playerId || pair.id_jugador2 === playerId) {
-                playerTeam = mp.equipo;
-                break;
-            }
+        if (!matchResult || matchResult.equipo_ganador === -1) {
+            return 0; // No se cuentan puntos en partidos suspendidos
         }
 
-        if (!playerTeam) return 0;
+        const matchSets = sets.filter(s => s.id_partido === matchId);
+        const playerMatchCouple = match_couples.find(mp => {
+            const pair = couples.find(p => p.id_pareja === mp.id_pareja);
+            return pair && (pair.id_jugador1 === playerId || pair.id_jugador2 === playerId) && mp.id_partido === matchId;
+        });
 
+        if (!playerMatchCouple) return 0;
+
+        const playerTeam = playerMatchCouple.equipo;
         const isWinner = matchResult.equipo_ganador === playerTeam;
         const isTie = matchResult.equipo_ganador === 0;
 
         if (isWinner) {
             return 20;
         } else if (isTie) {
-            let setsWon = 0;
-            if (playerTeam === 1) {
-                setsWon = matchSets.filter(s => s.juegos_equipo1 > s.juegos_equipo2).length;
-            } else {
-                setsWon = matchSets.filter(s => s.juegos_equipo2 > s.juegos_equipo1).length;
-            }
+            let setsWon = matchSets.filter(s => {
+                if (playerTeam === 1) return s.juegos_equipo1 > s.juegos_equipo2;
+                else return s.juegos_equipo2 > s.juegos_equipo1;
+            }).length;
             return setsWon;
         } else { // Derrota
-            let setsWon = 0;
-            if (playerTeam === 1) {
-                setsWon = matchSets.filter(s => s.juegos_equipo1 > s.juegos_equipo2).length;
-            } else {
-                setsWon = matchSets.filter(s => s.juegos_equipo2 > s.juegos_equipo1).length;
-            }
+            let setsWon = matchSets.filter(s => {
+                if (playerTeam === 1) return s.juegos_equipo1 > s.juegos_equipo2;
+                else return s.juegos_equipo2 > s.juegos_equipo1;
+            }).length;
             return setsWon;
         }
     };
 
-    // Función para obtener los datos de cada jugador
+    // Función principal para obtener los datos de cada jugador
     const getPlayerStats = () => {
-        return players.map(player => {
-            const playerMatches = matches.filter(match => {
-                const isSuspended = results.find(r => r.id_partido === match.id_partido)?.equipo_ganador === -1;
-                if (isSuspended) return false;
+        const playerStatsMap = new Map();
 
-                const playerInMatch = appData.match_pareja.some(mp => {
-                    if (mp.id_partido === match.id_partido) {
-                        const pair = appData.parejas.find(p => p.id_pareja === mp.id_pareja);
-                        return pair && (pair.id_jugador1 === player.id_jugador || pair.id_jugador2 === player.id_jugador);
-                    }
-                    return false;
-                });
-                return playerInMatch;
-            });
-
-            let wins = 0;
-            let losses = 0;
-            let ties = 0;
-            let totalPoints = 0;
-
-            playerMatches.forEach(match => {
-                const matchResult = results.find(r => r.id_partido === match.id_partido);
-                if (!matchResult) return;
-
-                const playerTeam = appData.match_pareja.find(mp => {
-                    const pair = appData.parejas.find(p => p.id_pareja === mp.id_pareja);
-                    return mp.id_partido === match.id_partido && (pair.id_jugador1 === player.id_jugador || pair.id_jugador2 === player.id_jugador);
-                })?.equipo;
-
-                if (matchResult.equipo_ganador === playerTeam) {
-                    wins++;
-                } else if (matchResult.equipo_ganador === 0) {
-                    ties++;
-                } else {
-                    losses++;
-                }
-
-                totalPoints += calculatePlayerPoints(player.id_jugador, match.id_partido);
-            });
-
-            const pointsPerMatch = playerMatches.length > 0 ? (totalPoints / playerMatches.length).toFixed(2) : 0;
-            
-            // Lógica para racha de victorias consecutivas
-            let currentWinStreak = 0;
-            let maxWinStreak = 0;
-            const sortedMatches = playerMatches.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-            sortedMatches.forEach(match => {
-                const matchResult = results.find(r => r.id_partido === match.id_partido);
-                const playerTeam = appData.match_pareja.find(mp => {
-                    const pair = appData.parejas.find(p => p.id_pareja === mp.id_pareja);
-                    return mp.id_partido === match.id_partido && (pair.id_jugador1 === player.id_jugador || pair.id_jugador2 === player.id_jugador);
-                })?.equipo;
-
-                if (matchResult.equipo_ganador === playerTeam) {
-                    currentWinStreak++;
-                } else {
-                    maxWinStreak = Math.max(maxWinStreak, currentWinStreak);
-                    currentWinStreak = 0;
-                }
-            });
-            maxWinStreak = Math.max(maxWinStreak, currentWinStreak);
-
-            return {
+        players.forEach(player => {
+            playerStatsMap.set(player.id_jugador, {
                 ...player,
-                matchesPlayed: playerMatches.length,
-                wins,
-                losses,
-                ties,
-                totalPoints,
-                pointsPerMatch: parseFloat(pointsPerMatch),
-                winStreak: maxWinStreak
-            };
+                matchesPlayed: 0,
+                wins: 0,
+                losses: 0,
+                ties: 0,
+                totalPoints: 0,
+                pointsPerMatch: 0,
+                winStreak: 0,
+                lossStreak: 0,
+                setsWon: 0,
+                setsLost: 0,
+                gamesWon: 0,
+                gamesLost: 0,
+                matchHistory: []
+            });
         });
+
+        const playedMatches = matches.filter(match => {
+            const matchResult = results.find(r => r.id_partido === match.id_partido);
+            return matchResult && matchResult.equipo_ganador !== -1;
+        }).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+        playedMatches.forEach(match => {
+            const matchCouples = match_couples.filter(mp => mp.id_partido === match.id_partido);
+            const matchResult = results.find(r => r.id_partido === match.id_partido);
+
+            matchCouples.forEach(mp => {
+                const couple = couples.find(p => p.id_pareja === mp.id_pareja);
+                const playersInCouple = [couple.id_jugador1, couple.id_jugador2];
+
+                playersInCouple.forEach(playerId => {
+                    const stats = playerStatsMap.get(playerId);
+                    if (!stats) return;
+
+                    stats.matchesPlayed++;
+                    const points = calculatePlayerPoints(playerId, match.id_partido);
+                    stats.totalPoints += points;
+                    
+                    if (matchResult.equipo_ganador === mp.equipo) {
+                        stats.wins++;
+                        stats.winStreak = (stats.winStreak || 0) + 1;
+                        stats.lossStreak = 0;
+                    } else if (matchResult.equipo_ganador === 0) {
+                        stats.ties++;
+                        stats.winStreak = 0;
+                        stats.lossStreak = 0;
+                    } else {
+                        stats.losses++;
+                        stats.lossStreak = (stats.lossStreak || 0) + 1;
+                        stats.winStreak = 0;
+                    }
+
+                    const matchSets = sets.filter(s => s.id_partido === match.id_partido);
+                    matchSets.forEach(s => {
+                        if (mp.equipo === 1) {
+                            if (s.juegos_equipo1 > s.juegos_equipo2) stats.setsWon++; else stats.setsLost++;
+                            stats.gamesWon += s.juegos_equipo1;
+                            stats.gamesLost += s.juegos_equipo2;
+                        } else {
+                            if (s.juegos_equipo2 > s.juegos_equipo1) stats.setsWon++; else stats.setsLost++;
+                            stats.gamesWon += s.juegos_equipo2;
+                            stats.gamesLost += s.juegos_equipo1;
+                        }
+                    });
+                });
+            });
+        });
+
+        // Calcular puntos por partido y devolver el array
+        const finalStats = Array.from(playerStatsMap.values()).map(stats => ({
+            ...stats,
+            pointsPerMatch: stats.matchesPlayed > 0 ? (stats.totalPoints / stats.matchesPlayed) : 0
+        }));
+
+        return finalStats;
     };
 
     const playersStats = getPlayerStats();
@@ -185,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <tr>
                             <td>${index + 1}</td>
                             <td>${player.nombre}</td>
-                            <td>${player.pointsPerMatch}</td>
+                            <td>${player.pointsPerMatch.toFixed(2)}</td>
                             <td>${player.totalPoints}</td>
                             <td>${player.matchesPlayed}</td>
                             <td>${player.wins}</td>
@@ -198,79 +204,21 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     };
 
-    // --- PESTAÑA JUGADOR (Necesita selección, por ahora muestra el primero) ---
+    // --- PESTAÑA JUGADOR ---
     const renderPlayerProfile = () => {
-        // En un entorno real, tendrías un sistema para seleccionar un jugador (ej. URL param)
-        // Por ahora, usamos el primer jugador para demo
-        const player = playersStats[0];
+        // En un entorno real, seleccionarías un jugador (ej. a través de un URL param)
+        // Para este demo, usaremos el primer jugador de la lista
+        const player = playersStats[0]; 
         if (!player) return;
 
         document.getElementById('player-name').textContent = player.nombre;
         const container = document.getElementById('player-profile-container');
         
-        // Asumiendo que player.sets y player.games existen o se pueden calcular aquí
-        let totalSetsWon = 0;
-        let totalSetsLost = 0;
-        let totalGamesWon = 0;
-        let totalGamesLost = 0;
-        
-        const playerMatches = matches.filter(match => {
-            const isSuspended = results.find(r => r.id_partido === match.id_partido)?.equipo_ganador === -1;
-            if (isSuspended) return false;
-            const playerInMatch = appData.match_pareja.some(mp => {
-                if (mp.id_partido === match.id_partido) {
-                    const pair = appData.parejas.find(p => p.id_pareja === mp.id_pareja);
-                    return pair && (pair.id_jugador1 === player.id_jugador || pair.id_jugador2 === player.id_jugador);
-                }
-                return false;
-            });
-            return playerInMatch;
-        });
-
-        playerMatches.forEach(match => {
-            const matchSets = sets.filter(s => s.id_partido === match.id_partido);
-            const playerTeam = appData.match_pareja.find(mp => {
-                const pair = appData.parejas.find(p => p.id_pareja === mp.id_pareja);
-                return mp.id_partido === match.id_partido && (pair.id_jugador1 === player.id_jugador || pair.id_jugador2 === player.id_jugador);
-            })?.equipo;
-            
-            if(playerTeam === 1){
-                 matchSets.forEach(s => {
-                    if(s.juegos_equipo1 > s.juegos_equipo2) totalSetsWon++; else totalSetsLost++;
-                    totalGamesWon += s.juegos_equipo1;
-                    totalGamesLost += s.juegos_equipo2;
-                 });
-            } else if (playerTeam === 2){
-                matchSets.forEach(s => {
-                    if(s.juegos_equipo2 > s.juegos_equipo1) totalSetsWon++; else totalSetsLost++;
-                    totalGamesWon += s.juegos_equipo2;
-                    totalGamesLost += s.juegos_equipo1;
-                 });
-            }
-        });
-
-        container.innerHTML = `
-            <h3>Resumen de Rendimiento</h3>
-            <p><strong>Puntos totales:</strong> ${player.totalPoints}</p>
-            <p><strong>Puntos por partido:</strong> ${player.pointsPerMatch}</p>
-            <p><strong>Partidos jugados:</strong> ${player.matchesPlayed}</p>
-            <p><strong>Récord de Victorias Consecutivas:</strong> ${player.winStreak}</p>
-
-            <h3>Rendimiento con Parejas</h3>
-            <div id="partner-stats-table"></div>
-
-            <h3>Rendimiento contra Rivales</h3>
-            <div id="rival-stats-table"></div>
-
-            <h3>Detalle de Sets y Juegos</h3>
-            <p><strong>Sets ganados:</strong> ${totalSetsWon} / <strong>Sets perdidos:</strong> ${totalSetsLost}</p>
-            <p><strong>Juegos ganados:</strong> ${totalGamesWon} / <strong>Juegos perdidos:</strong> ${totalGamesLost}</p>
-        `;
-
-        // Renderizado de Rendimiento con Parejas
+        // Rendimiento con Parejas
         const partnerStats = getPartnerStats(player.id_jugador);
-        const partnerTable = document.getElementById('partner-stats-table');
-        partnerTable.innerHTML = `
+        const sortedPartnerStats = partnerStats.sort((a, b) => b.pointsPerMatch - a.pointsPerMatch);
+        const partnerTableHTML = `
+            <h3>Rendimiento con Parejas</h3>
             <table>
                 <thead>
                     <tr>
@@ -282,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </tr>
                 </thead>
                 <tbody>
-                    ${partnerStats.sort((a, b) => b.pointsPerMatch - a.pointsPerMatch).map(stat => `
+                    ${sortedPartnerStats.map(stat => `
                         <tr>
                             <td>${stat.partnerName}</td>
                             <td>${stat.pointsPerMatch.toFixed(2)}</td>
@@ -295,10 +243,11 @@ document.addEventListener('DOMContentLoaded', () => {
             </table>
         `;
 
-        // Renderizado de Rendimiento contra Rivales (ordenado de forma inversa)
+        // Rendimiento contra Rivales
         const rivalStats = getRivalStats(player.id_jugador);
-        const rivalTable = document.getElementById('rival-stats-table');
-        rivalTable.innerHTML = `
+        const sortedRivalStats = rivalStats.sort((a, b) => a.pointsPerMatch - b.pointsPerMatch);
+        const rivalTableHTML = `
+            <h3>Rendimiento contra Rivales</h3>
             <table>
                 <thead>
                     <tr>
@@ -310,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </tr>
                 </thead>
                 <tbody>
-                    ${rivalStats.sort((a, b) => a.pointsPerMatch - b.pointsPerMatch).map(stat => `
+                    ${sortedRivalStats.map(stat => `
                         <tr>
                             <td>${stat.rivalName}</td>
                             <td>${stat.pointsPerMatch.toFixed(2)}</td>
@@ -322,106 +271,126 @@ document.addEventListener('DOMContentLoaded', () => {
                 </tbody>
             </table>
         `;
+
+        container.innerHTML = `
+            <h3>Resumen de Rendimiento</h3>
+            <p><strong>Puntos totales:</strong> ${player.totalPoints}</p>
+            <p><strong>Puntos por partido:</strong> ${player.pointsPerMatch.toFixed(2)}</p>
+            <p><strong>Partidos jugados:</strong> ${player.matchesPlayed}</p>
+            <p><strong>Récord de Victorias Consecutivas:</strong> ${player.winStreak}</p>
+
+            ${partnerTableHTML}
+            ${rivalTableHTML}
+
+            <h3>Detalle de Sets y Juegos</h3>
+            <p><strong>Sets ganados:</strong> ${player.setsWon} / <strong>Sets perdidos:</strong> ${player.setsLost}</p>
+            <p><strong>Juegos ganados:</strong> ${player.gamesWon} / <strong>Juegos perdidos:</strong> ${player.gamesLost}</p>
+        `;
     };
-    
+
     const getPartnerStats = (playerId) => {
-        const stats = {};
+        const stats = new Map();
         
         const playerMatches = matches.filter(match => {
             const isSuspended = results.find(r => r.id_partido === match.id_partido)?.equipo_ganador === -1;
             if (isSuspended) return false;
-            const playerInMatch = appData.match_pareja.some(mp => {
-                const pair = appData.parejas.find(p => p.id_pareja === mp.id_pareja);
+            const playerInMatch = match_couples.some(mp => {
+                const pair = couples.find(p => p.id_pareja === mp.id_pareja);
                 return mp.id_partido === match.id_partido && (pair.id_jugador1 === playerId || pair.id_jugador2 === playerId);
             });
             return playerInMatch;
         });
         
         playerMatches.forEach(match => {
-            const playerPair = appData.parejas.find(p => {
-                const mp = appData.match_pareja.find(mp => mp.id_partido === match.id_partido && mp.id_pareja === p.id_pareja);
+            const playerPair = couples.find(p => {
+                const mp = match_couples.find(mp => mp.id_partido === match.id_partido && mp.id_pareja === p.id_pareja);
                 return mp && (p.id_jugador1 === playerId || p.id_jugador2 === playerId);
             });
             if (!playerPair) return;
             
             const partnerId = playerPair.id_jugador1 === playerId ? playerPair.id_jugador2 : playerPair.id_jugador1;
             
-            if (!stats[partnerId]) {
-                stats[partnerId] = { wins: 0, losses: 0, ties: 0, totalPoints: 0, matchesPlayed: 0 };
+            if (!stats.has(partnerId)) {
+                stats.set(partnerId, { wins: 0, losses: 0, ties: 0, totalPoints: 0, matchesPlayed: 0 });
             }
             
             const matchResult = results.find(r => r.id_partido === match.id_partido);
-            const playerTeam = appData.match_pareja.find(mp => mp.id_partido === match.id_partido && mp.id_pareja === playerPair.id_pareja)?.equipo;
+            const playerTeam = match_couples.find(mp => mp.id_partido === match.id_partido && mp.id_pareja === playerPair.id_pareja)?.equipo;
             
-            if(matchResult.equipo_ganador === playerTeam) stats[partnerId].wins++;
-            else if(matchResult.equipo_ganador === 0) stats[partnerId].ties++;
-            else stats[partnerId].losses++;
+            const currentStats = stats.get(partnerId);
+            if (matchResult.equipo_ganador === playerTeam) currentStats.wins++;
+            else if (matchResult.equipo_ganador === 0) currentStats.ties++;
+            else currentStats.losses++;
             
-            stats[partnerId].totalPoints += calculatePlayerPoints(playerId, match.id_partido);
-            stats[partnerId].matchesPlayed++;
+            currentStats.totalPoints += calculatePlayerPoints(playerId, match.id_partido);
+            currentStats.matchesPlayed++;
         });
 
-        return Object.keys(stats).map(id => {
+        return Array.from(stats.keys()).map(id => {
             const partnerName = players.find(p => p.id_jugador == id).nombre;
+            const currentStats = stats.get(id);
             return {
                 partnerName,
-                wins: stats[id].wins,
-                losses: stats[id].losses,
-                ties: stats[id].ties,
-                pointsPerMatch: stats[id].matchesPlayed > 0 ? stats[id].totalPoints / stats[id].matchesPlayed : 0
+                wins: currentStats.wins,
+                losses: currentStats.losses,
+                ties: currentStats.ties,
+                pointsPerMatch: currentStats.matchesPlayed > 0 ? currentStats.totalPoints / currentStats.matchesPlayed : 0
             };
         });
     };
 
     const getRivalStats = (playerId) => {
-        const stats = {};
+        const stats = new Map();
         const playerMatches = matches.filter(match => {
             const isSuspended = results.find(r => r.id_partido === match.id_partido)?.equipo_ganador === -1;
             if (isSuspended) return false;
-            const playerInMatch = appData.match_pareja.some(mp => {
-                const pair = appData.parejas.find(p => p.id_pareja === mp.id_pareja);
+            const playerInMatch = match_couples.some(mp => {
+                const pair = couples.find(p => p.id_pareja === mp.id_pareja);
                 return mp.id_partido === match.id_partido && (pair.id_jugador1 === playerId || pair.id_jugador2 === playerId);
             });
             return playerInMatch;
         });
 
         playerMatches.forEach(match => {
-            const playerPair = appData.parejas.find(p => {
-                const mp = appData.match_pareja.find(mp => mp.id_partido === match.id_partido && mp.id_pareja === p.id_pareja);
-                return mp && (p.id_jugador1 === playerId || p.id_jugador2 === playerId);
+            const playerCoupleData = match_couples.find(mp => {
+                const pair = couples.find(p => p.id_pareja === mp.id_pareja);
+                return mp.id_partido === match.id_partido && (pair.id_jugador1 === playerId || pair.id_jugador2 === playerId);
             });
             
-            const playerTeam = appData.match_pareja.find(mp => mp.id_partido === match.id_partido && mp.id_pareja === playerPair.id_pareja)?.equipo;
+            const playerTeam = playerCoupleData.equipo;
             const rivalTeam = playerTeam === 1 ? 2 : 1;
             
-            const rivalPairData = appData.match_pareja.find(mp => mp.id_partido === match.id_partido && mp.equipo === rivalTeam);
-            const rivalPair = appData.parejas.find(p => p.id_pareja === rivalPairData.id_pareja);
-            const rivalPlayer1Id = rivalPair.id_jugador1;
-            const rivalPlayer2Id = rivalPair.id_jugador2;
+            const rivalCoupleData = match_couples.find(mp => mp.id_partido === match.id_partido && mp.equipo === rivalTeam);
+            if (!rivalCoupleData) return;
+            const rivalCouple = couples.find(p => p.id_pareja === rivalCoupleData.id_pareja);
+            const rivalPlayer1Id = rivalCouple.id_jugador1;
+            const rivalPlayer2Id = rivalCouple.id_jugador2;
             
             [rivalPlayer1Id, rivalPlayer2Id].forEach(rivalId => {
-                if (!stats[rivalId]) {
-                    stats[rivalId] = { wins: 0, losses: 0, ties: 0, totalPoints: 0, matchesPlayed: 0 };
+                if (!stats.has(rivalId)) {
+                    stats.set(rivalId, { wins: 0, losses: 0, ties: 0, totalPoints: 0, matchesPlayed: 0 });
                 }
 
+                const currentStats = stats.get(rivalId);
                 const matchResult = results.find(r => r.id_partido === match.id_partido);
-                if(matchResult.equipo_ganador === playerTeam) stats[rivalId].wins++;
-                else if(matchResult.equipo_ganador === 0) stats[rivalId].ties++;
-                else stats[rivalId].losses++;
+                if (matchResult.equipo_ganador === playerTeam) currentStats.wins++;
+                else if (matchResult.equipo_ganador === 0) currentStats.ties++;
+                else currentStats.losses++;
                 
-                stats[rivalId].totalPoints += calculatePlayerPoints(playerId, match.id_partido);
-                stats[rivalId].matchesPlayed++;
+                currentStats.totalPoints += calculatePlayerPoints(playerId, match.id_partido);
+                currentStats.matchesPlayed++;
             });
         });
 
-        return Object.keys(stats).map(id => {
+        return Array.from(stats.keys()).map(id => {
             const rivalName = players.find(p => p.id_jugador == id).nombre;
+            const currentStats = stats.get(id);
             return {
                 rivalName,
-                wins: stats[id].wins,
-                losses: stats[id].losses,
-                ties: stats[id].ties,
-                pointsPerMatch: stats[id].matchesPlayed > 0 ? stats[id].totalPoints / stats[id].matchesPlayed : 0
+                wins: currentStats.wins,
+                losses: currentStats.losses,
+                ties: currentStats.ties,
+                pointsPerMatch: currentStats.matchesPlayed > 0 ? currentStats.totalPoints / currentStats.matchesPlayed : 0
             };
         });
     };
@@ -433,8 +402,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Rendimiento en Sets y Juegos
         const allPlayedMatches = matches.filter(match => {
-            const isSuspended = results.find(r => r.id_partido === match.id_partido)?.equipo_ganador === -1;
-            return !isSuspended;
+            const matchResult = results.find(r => r.id_partido === match.id_partido);
+            return matchResult && matchResult.equipo_ganador !== -1;
         });
 
         let totalSets = 0;
@@ -450,26 +419,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Curiosidades y Récords
         const allSets = sets.filter(s => {
-            const isSuspended = results.find(r => r.id_partido === s.id_partido)?.equipo_ganador === -1;
-            return !isSuspended;
+            const matchResult = results.find(r => r.id_partido === s.id_partido);
+            return matchResult && matchResult.equipo_ganador !== -1;
         });
         
-        let maxGameDiffSet = { diff: 0, matchId: null };
+        let maxGameDiffSet = { diff: 0, games: '', matchId: null };
         allSets.forEach(s => {
             const diff = Math.abs(s.juegos_equipo1 - s.juegos_equipo2);
             if (diff > maxGameDiffSet.diff) {
-                maxGameDiffSet = { diff, matchId: s.id_partido, setNum: s.numero_set };
+                maxGameDiffSet = { diff, games: `${s.juegos_equipo1}-${s.juegos_equipo2}`, matchId: s.id_partido };
             }
         });
 
         const playerWithMostMatches = playersStats.sort((a, b) => b.matchesPlayed - a.matchesPlayed)[0];
 
         let pairsPlayedCount = {};
-        appData.match_pareja.forEach(mp => {
-            const isSuspended = results.find(r => r.id_partido === mp.id_partido)?.equipo_ganador === -1;
-            if (isSuspended) return;
+        match_couples.forEach(mp => {
+            const matchResult = results.find(r => r.id_partido === mp.id_partido);
+            if (!matchResult || matchResult.equipo_ganador === -1) return;
             
-            const pair = appData.parejas.find(p => p.id_pareja === mp.id_pareja);
+            const pair = couples.find(p => p.id_pareja === mp.id_pareja);
             const pairKey = [pair.id_jugador1, pair.id_jugador2].sort().join('-');
             pairsPlayedCount[pairKey] = (pairsPlayedCount[pairKey] || 0) + 1;
         });
@@ -481,36 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const allWinStreaks = playersStats.map(p => p.winStreak);
         const maxWinStreak = Math.max(...allWinStreaks);
 
-        const allLossStreaks = playersStats.map(p => {
-            let currentLossStreak = 0;
-            let maxLossStreak = 0;
-            const playerMatches = matches.filter(match => {
-                const isSuspended = results.find(r => r.id_partido === match.id_partido)?.equipo_ganador === -1;
-                if (isSuspended) return false;
-                const playerInMatch = appData.match_pareja.some(mp => {
-                    const pair = appData.parejas.find(p => p.id_pareja === mp.id_pareja);
-                    return mp.id_partido === match.id_partido && (pair.id_jugador1 === p.id_jugador || pair.id_jugador2 === p.id_jugador);
-                });
-                return playerInMatch;
-            });
-            const sortedMatches = playerMatches.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-
-            sortedMatches.forEach(match => {
-                const matchResult = results.find(r => r.id_partido === match.id_partido);
-                const playerTeam = appData.match_pareja.find(mp => {
-                    const pair = appData.parejas.find(p => p.id_pareja === mp.id_pareja);
-                    return mp.id_partido === match.id_partido && (pair.id_jugador1 === p.id_jugador || pair.id_jugador2 === p.id_jugador);
-                })?.equipo;
-                
-                if (matchResult.equipo_ganador !== playerTeam && matchResult.equipo_ganador !== 0) {
-                    currentLossStreak++;
-                } else {
-                    maxLossStreak = Math.max(maxLossStreak, currentLossStreak);
-                    currentLossStreak = 0;
-                }
-            });
-            return Math.max(maxLossStreak, currentLossStreak);
-        });
+        const allLossStreaks = playersStats.map(p => p.lossStreak);
         const maxLossStreak = Math.max(...allLossStreaks);
         
         // Parejas habituales e inéditas
@@ -545,7 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <h3>Curiosidades y Récords</h3>
             <ul>
-                <li><strong>Mayor diferencia de juegos en un set:</strong> ${maxGameDiffSet.diff} juegos</li>
+                <li><strong>Mayor diferencia de juegos en un set:</strong> ${maxGameDiffSet.diff} juegos (${maxGameDiffSet.games})</li>
                 <li><strong>Jugador con más partidos jugados:</strong> ${playerWithMostMatches ? playerWithMostMatches.nombre : 'N/A'} (${playerWithMostMatches ? playerWithMostMatches.matchesPlayed : 0} partidos)</li>
                 <li><strong>Pareja con más partidos jugados:</strong> ${mostPlayedPairNames ? mostPlayedPairNames : 'N/A'} (${pairsPlayedCount[mostPlayedPairKey] || 0} partidos)</li>
                 <li><strong>Racha de victorias más larga:</strong> ${maxWinStreak} partidos</li>
@@ -553,7 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </ul>
 
             <h3>Parejas Habituales</h3>
-            <div id="habitual-pairs-table">
+            <div id="habitual-pairs-table" class="table-container">
                 <table>
                     <thead>
                         <tr>
@@ -614,11 +554,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (selectedMonth && matchMonth != selectedMonth) return false;
 
             // Filtro por jugador
+            let playerTeam = null;
             if (selectedPlayerId) {
-                const playerInMatch = appData.match_pareja.some(mp => {
+                const playerInMatch = match_couples.some(mp => {
                     if (mp.id_partido === match.id_partido) {
-                        const pair = appData.parejas.find(p => p.id_pareja === mp.id_pareja);
-                        return pair && (pair.id_jugador1 === selectedPlayerId || pair.id_jugador2 === selectedPlayerId);
+                        const pair = couples.find(p => p.id_pareja === mp.id_pareja);
+                        if (pair && (pair.id_jugador1 === selectedPlayerId || pair.id_jugador2 === selectedPlayerId)) {
+                             playerTeam = mp.equipo;
+                             return true;
+                        }
                     }
                     return false;
                 });
@@ -626,33 +570,32 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Filtro por resultado
-            if (selectedResult) {
-                const matchResults = results.find(r => r.id_partido === match.id_partido);
-                if (!matchResults) return false;
-
-                const selectedPlayerTeam = appData.match_pareja.find(mp => {
-                    const pair = appData.parejas.find(p => p.id_pareja === mp.id_pareja);
-                    return mp.id_partido === match.id_partido && (pair.id_jugador1 === selectedPlayerId || pair.id_jugador2 === selectedPlayerId);
-                })?.equipo;
-
-                if (selectedResult === 'won' && matchResults.equipo_ganador !== selectedPlayerTeam) return false;
-                if (selectedResult === 'lost' && matchResults.equipo_ganador === selectedPlayerTeam) return false;
-                if (selectedResult === 'tied' && matchResults.equipo_ganador !== 0) return false;
+            if (selectedResult && selectedPlayerId) {
+                if (selectedResult === 'won' && matchResult.equipo_ganador !== playerTeam) return false;
+                if (selectedResult === 'lost' && (matchResult.equipo_ganador === playerTeam || matchResult.equipo_ganador === 0)) return false;
+                if (selectedResult === 'tied' && matchResult.equipo_ganador !== 0) return false;
+            } else if (selectedResult && !selectedPlayerId) {
+                 // Si solo se filtra por resultado, se asume que el usuario quiere ver cualquier partido
+                 // con ese resultado, no un resultado específico para un jugador
+                 if (selectedResult === 'won' && matchResult.equipo_ganador === 0) return false;
+                 if (selectedResult === 'lost' && matchResult.equipo_ganador !== 0) return false;
+                 if (selectedResult === 'tied' && matchResult.equipo_ganador !== 0) return false;
             }
-
             return true;
         });
 
-        // Generar el HTML de la tabla
         const tableContent = filteredMatches.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)).map(match => {
-            const matchPairs = appData.match_pareja.filter(mp => mp.id_partido === match.id_partido);
-            const pair1 = appData.parejas.find(p => p.id_pareja === matchPairs.find(mp => mp.equipo === 1).id_pareja);
-            const pair2 = appData.parejas.find(p => p.id_pareja === matchPairs.find(mp => mp.equipo === 2).id_pareja);
+            const matchCouplesData = match_couples.filter(mp => mp.id_partido === match.id_partido);
+            const couple1Data = matchCouplesData.find(mp => mp.equipo === 1);
+            const couple2Data = matchCouplesData.find(mp => mp.equipo === 2);
             
-            const player1Pair1 = players.find(p => p.id_jugador === pair1.id_jugador1).nombre;
-            const player2Pair1 = players.find(p => p.id_jugador === pair1.id_jugador2).nombre;
-            const player1Pair2 = players.find(p => p.id_jugador === pair2.id_jugador1).nombre;
-            const player2Pair2 = players.find(p => p.id_jugador === pair2.id_jugador2).nombre;
+            const couple1 = couples.find(p => p.id_pareja === couple1Data.id_pareja);
+            const couple2 = couples.find(p => p.id_pareja === couple2Data.id_pareja);
+            
+            const player1Pair1 = players.find(p => p.id_jugador === couple1.id_jugador1).nombre;
+            const player2Pair1 = players.find(p => p.id_jugador === couple1.id_jugador2).nombre;
+            const player1Pair2 = players.find(p => p.id_jugador === couple2.id_jugador1).nombre;
+            const player2Pair2 = players.find(p => p.id_jugador === couple2.id_jugador2).nombre;
 
             const matchSets = sets.filter(s => s.id_partido === match.id_partido);
             const result = matchSets.map(s => `${s.juegos_equipo1}-${s.juegos_equipo2}`).join(', ');
@@ -661,6 +604,18 @@ document.addEventListener('DOMContentLoaded', () => {
             let winnerText = 'Empate';
             if (matchResult.equipo_ganador === 1) winnerText = 'Equipo 1';
             if (matchResult.equipo_ganador === 2) winnerText = 'Equipo 2';
+            if (matchResult.equipo_ganador === -1) winnerText = 'Suspendido';
+            
+            // Calculamos puntos para el Historial
+            const playerPoints = {};
+            const playersInMatch = [
+                couple1.id_jugador1, couple1.id_jugador2,
+                couple2.id_jugador1, couple2.id_jugador2
+            ];
+            playersInMatch.forEach(pId => {
+                playerPoints[pId] = calculatePlayerPoints(pId, match.id_partido);
+            });
+            const pointsText = playersInMatch.map(pId => `${players.find(p => p.id_jugador === pId).nombre}: ${playerPoints[pId]} pts`).join(', ');
 
             return `
                 <tr>
@@ -668,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${player1Pair1} y ${player2Pair1} vs ${player1Pair2} y ${player2Pair2}</td>
                     <td>${result}</td>
                     <td>${winnerText}</td>
-                    <td>N/A (Cálculo en JS)</td>
+                    <td>${pointsText}</td>
                 </tr>
             `;
         }).join('');
@@ -685,7 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </tr>
                 </thead>
                 <tbody>
-                    ${tableContent}
+                    ${tableContent || '<tr><td colspan="5">No se encontraron partidos.</td></tr>'}
                 </tbody>
             </table>
         `;
@@ -695,7 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
     monthFilter.addEventListener('change', renderHistory);
     playerFilter.addEventListener('change', renderHistory);
     resultFilter.addEventListener('change', renderHistory);
-    
-    // Iniciar la aplicación mostrando la primera pestaña
+
+    // Renderizar la pestaña inicial por defecto
     renderRanking();
 });
