@@ -185,6 +185,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderRanking = () => {
         const sortedPlayers = [...playersStats].sort((a, b) => b.pointsPerMatch - a.pointsPerMatch);
         const container = document.getElementById('ranking-container');
+
+        const tableContent = sortedPlayers.map((player, index) => {
+            return `
+                <tr>
+                    <td data-label="Posición">${index + 1}</td>
+                    <td data-label="Nombre">${player.nombre}</td>
+                    <td data-label="Puntos por Partido">${player.pointsPerMatch.toFixed(2)}</td>
+                    <td data-label="Puntos Totales">${player.totalPoints}</td>
+                    <td data-label="Partidos Jugados">${player.matchesPlayed}</td>
+                    <td data-label="Ganados">${player.wins}</td>
+                    <td data-label="Empatados">${player.ties}</td>
+                    <td data-label="Perdidos">${player.losses}</td>
+                </tr>
+            `;
+        }).join('');
+
         container.innerHTML = `
             <table>
                 <thead>
@@ -200,18 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </tr>
                 </thead>
                 <tbody>
-                    ${sortedPlayers.map((player, index) => `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${player.nombre}</td>
-                            <td>${player.pointsPerMatch.toFixed(2)}</td>
-                            <td>${player.totalPoints}</td>
-                            <td>${player.matchesPlayed}</td>
-                            <td>${player.wins}</td>
-                            <td>${player.ties}</td>
-                            <td>${player.losses}</td>
-                        </tr>
-                    `).join('')}
+                    ${tableContent}
                 </tbody>
             </table>
         `;
@@ -575,14 +580,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const historyContainer = document.getElementById('history-container');
 
     const renderHistory = () => {
-        // --- INICIO DE LA CORRECCIÓN ---
-        // 1. Guarda el valor actual del filtro de jugador
         const selectedPlayerId = playerFilter.value;
-        // 2. Reconstruye el menú desplegable
         playerFilter.innerHTML = '<option value="">Todos los jugadores</option>' + players.map(p => `<option value="${p.id_jugador}">${p.nombre}</option>`).join('');
-        // 3. Restaura el valor del filtro de jugador
         playerFilter.value = selectedPlayerId;
-        // --- FIN DE LA CORRECCIÓN ---
 
         const filteredMatches = matches.filter(match => {
             const matchDate = new Date(match.fecha);
@@ -594,10 +594,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const isSuspended = matchResult?.equipo_ganador === -1;
             if (isSuspended) return false;
 
-            // Filtro por mes (funciona correctamente)
             if (selectedMonth && matchMonth != selectedMonth) return false;
 
-            // Lógica para el filtro de jugador
             let playerTeam = null;
             if (selectedPlayerId) {
                 const playerCoupleData = match_couples.find(mp => {
@@ -609,7 +607,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 playerTeam = playerCoupleData.equipo;
             }
 
-            // Lógica para el filtro de resultado
             if (selectedResult) {
                 if (selectedPlayerId) {
                     const isPlayerWinner = matchResult.equipo_ganador === playerTeam;
@@ -651,7 +648,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (matchResult.equipo_ganador === 2) winnerText = 'Equipo 2';
             if (matchResult.equipo_ganador === -1) winnerText = 'Suspendido';
             
-            // Calculamos puntos para el Historial
             const playerPoints = {};
             const playersInMatch = [
                 couple1.id_jugador1, couple1.id_jugador2,

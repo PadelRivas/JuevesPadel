@@ -22,7 +22,6 @@ header {
     border-bottom: 2px solid #c5cae9;
     padding: 0;
     margin-bottom: 2rem;
-    /* Mejora para móviles: hace que las pestañas sean desplazables */
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
@@ -46,7 +45,6 @@ header {
     color: #3f51b5;
     transition: background-color 0.3s, color 0.3s;
     border-radius: 5px 5px 0 0;
-    /* Asegura que los botones no se achiquen */
     flex-shrink: 0;
 }
 
@@ -113,10 +111,9 @@ select {
     font-size: 1rem;
 }
 
-/* --- Adaptación para tablas en móviles --- */
 .table-container {
-    overflow-x: auto; /* Activa el desplazamiento horizontal */
-    -webkit-overflow-scrolling: touch; /* Mejora el "feeling" del desplazamiento en iOS */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     margin-top: 1rem;
 }
 
@@ -124,7 +121,6 @@ table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9rem;
-    /* La tabla no se achicará más de lo necesario */
     min-width: 600px;
 }
 
@@ -137,7 +133,6 @@ th, td {
     text-align: left;
     padding: 12px;
     border-bottom: 1px solid #ddd;
-    /* Mantener el espacio entre celdas */
     white-space: nowrap;
 }
 
@@ -157,7 +152,6 @@ tbody tr:hover {
     border-radius: 4px;
 }
 
-/* --- Media query para ajustar el diseño en pantallas pequeñas --- */
 @media (max-width: 768px) {
     body {
         font-size: 14px;
@@ -172,7 +166,7 @@ tbody tr:hover {
     }
 
     .tabs {
-        justify-content: flex-start; /* Alinea las pestañas a la izquierda */
+        justify-content: flex-start;
     }
 
     .tab-button {
@@ -181,8 +175,52 @@ tbody tr:hover {
     }
 
     .history-filters {
-        flex-direction: column; /* Apila los filtros verticalmente */
+        flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
+    }
+    
+    /* SOLUCIÓN PARA TABLA DE RANKING EN MÓVILES */
+    #ranking-container table {
+        min-width: unset; /* Reinicia el min-width */
+    }
+
+    #ranking-container table thead {
+        display: none;
+    }
+
+    #ranking-container table,
+    #ranking-container table tr {
+        display: block;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+
+    #ranking-container table td {
+        display: block;
+        text-align: right;
+        border-bottom: 1px solid #eee;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        position: relative;
+    }
+
+    #ranking-container table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        float: left;
+        color: #1a237e;
+    }
+
+    #ranking-container table tr td:first-child {
+        background-color: #e8eaf6;
+        color: #3f51b5;
+        font-size: 1.1rem;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 8px 8px 0 0;
+        padding: 1rem 0;
     }
 }
