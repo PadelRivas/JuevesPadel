@@ -1,190 +1,124 @@
-/* Usamos una tipografía similar a la de Apple, como San Francisco */
-@font-face {
-    font-family: 'SF Pro Display';
-    src: url('https://apple-fonts.s3.amazonaws.com/SF-Pro-Display-Regular.otf');
-    font-weight: 400;
+:root {
+    --primary-color: #007BFF;
+    --secondary-color: #e9ecef;
+    --background-color: #f8f9fa;
+    --card-background: #ffffff;
+    --border-color: #dee2e6;
+    --font-color: #343a40;
 }
 
 body {
-    font-family: 'SF Pro Display', Arial, sans-serif;
-    background-color: #f5f5f7;
-    color: #1d1d1f;
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--font-color);
     margin: 0;
     padding: 0;
+    line-height: 1.6;
 }
+
 header {
-    background-color: #fff;
-    border-bottom: 1px solid #d2d2d7;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    text-align: center;
 }
-nav {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.logo {
-    font-size: 24px;
-    font-weight: 600;
-}
+
 .tabs {
     display: flex;
-    gap: 15px;
+    justify-content: center;
+    overflow-x: auto;
+    background-color: var(--secondary-color);
+    border-bottom: 2px solid var(--border-color);
 }
+
 .tab-button {
-    background: none;
+    background-color: transparent;
     border: none;
-    color: #6e6e73;
-    padding: 10px 15px;
+    padding: 1rem 1.5rem;
     cursor: pointer;
-    font-size: 16px;
-    font-weight: 400;
-    transition: color 0.3s ease;
+    font-size: 1rem;
+    color: var(--font-color);
+    transition: background-color 0.3s, color 0.3s;
+    flex-shrink: 0;
 }
-.tab-button:hover {
-    color: #1d1d1f;
-}
+
 .tab-button.active {
-    color: #1d1d1f;
-    font-weight: 600;
-    border-bottom: 2px solid #0071e3;
+    background-color: var(--primary-color);
+    color: white;
 }
+
 main {
-    max-width: 980px;
+    padding: 1rem;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
 }
-.tab-content {
+
+.tab-pane {
     display: none;
 }
-.tab-content.active {
+
+.tab-pane.active {
     display: block;
 }
+
 h2 {
-    font-size: 40px;
-    font-weight: 700;
-    text-align: center;
-    margin: 40px 0;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+    margin-top: 1.5rem;
 }
-h3 {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 10px;
+
+.table-container {
+    overflow-x: auto;
+    margin-top: 1rem;
 }
-.content-block {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
-}
-.chart-container {
-    width: 100%;
-}
-.ranking-table {
+
+table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 1rem;
 }
-.ranking-table th, .ranking-table td {
-    padding: 15px;
+
+th, td {
+    border: 1px solid var(--border-color);
+    padding: 0.75rem;
     text-align: left;
-    border-bottom: 1px solid #d2d2d7;
-}
-.ranking-table th {
-    font-weight: 600;
-    color: #6e6e73;
-}
-.match-card {
-    border-bottom: 1px solid #d2d2d7;
-    padding: 15px 0;
-}
-.match-card:last-child {
-    border-bottom: none;
-}
-.match-card h4 {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0 0 5px 0;
-}
-.match-card p {
-    margin: 0;
-    color: #6e6e73;
-}
-.match-card strong {
-    font-size: 16px;
-    color: #1d1d1f;
 }
 
-/* ---- Estilos para la opción de tarjetas en móvil ---- */
-.ranking-cards {
-    display: none; /* Ocultar por defecto */
+th {
+    background-color: var(--secondary-color);
+    font-weight: bold;
 }
-.player-card {
-    background-color: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    position: relative;
-    border: 1px solid #e0e0e0;
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
 }
-.player-card strong {
-    font-size: 1.2em;
-    font-weight: 600;
-}
-.player-card .position {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    font-size: 1.5em;
-    font-weight: 700;
-    color: #0071e3;
-}
-.player-card .stat {
+
+.filters {
     display: flex;
-    justify-content: space-between;
-    margin-top: 5px;
-    font-size: 0.9em;
-}
-.player-card .stat span:first-child {
-    color: #6e6e73;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 
-/* Adaptación a dispositivos móviles */
+.filters select {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+/* Estilos para móviles */
 @media (max-width: 768px) {
-    nav {
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
+    header {
+        padding: 0.5rem;
     }
-    .tabs {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    .tab-button {
-        padding: 8px 12px;
-        font-size: 14px;
-    }
-    h2 {
-        font-size: 32px;
-    }
-    h3 {
-        font-size: 20px;
-    }
-    .content-block {
-        padding: 20px;
+
+    h1 {
+        font-size: 1.5rem;
     }
     
-    /* Mostrar tarjetas y ocultar tabla en pantallas pequeñas */
-    #rankingTableDesktop {
-        display: none;
-    }
-    #rankingCardsMobile {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+    .tab-button {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
     }
 }
