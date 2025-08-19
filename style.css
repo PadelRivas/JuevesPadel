@@ -180,41 +180,52 @@ tbody tr:hover {
         gap: 0.5rem;
     }
     
-    /* SOLUCIÓN PARA TABLA DE RANKING EN MÓVILES */
-    #ranking-container table {
-        min-width: unset; /* Reinicia el min-width */
+    /* Regla general para tablas que no necesitan scroll */
+    .table-container table {
+        min-width: unset;
     }
 
-    #ranking-container table thead {
+    /* SOLUCIÓN PARA TABLAS ESPECÍFICAS EN MÓVILES (ej. Clasificación y Parejas Habituales) */
+    #ranking-container table thead, 
+    #habitual-pairs-table table thead {
         display: none;
     }
 
     #ranking-container table,
-    #ranking-container table tr {
+    #ranking-container table tr,
+    #habitual-pairs-table table,
+    #habitual-pairs-table table tr {
         display: block;
         margin-bottom: 1rem;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         border: none;
+        width: 95%;
+        margin: 0.5rem auto;
     }
 
-    #ranking-container table td {
+    #ranking-container table td,
+    #habitual-pairs-table table td {
         display: block;
         text-align: right;
         border-bottom: 1px solid #eee;
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        padding-right: 1rem;
         position: relative;
     }
 
-    #ranking-container table td::before {
+    #ranking-container table td::before,
+    #habitual-pairs-table table td::before {
         content: attr(data-label);
         font-weight: bold;
         float: left;
         color: #1a237e;
+        padding-left: 1rem;
     }
 
-    #ranking-container table tr td:first-child {
+    #ranking-container table tr td:first-child,
+    #habitual-pairs-table table tr td:first-child {
         background-color: #e8eaf6;
         color: #3f51b5;
         font-size: 1.1rem;

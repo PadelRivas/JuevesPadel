@@ -233,6 +233,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Calcula la diferencia de sets y juegos
+        const setDifference = player.setsWon - player.setsLost;
+        const gameDifference = player.gamesWon - player.gamesLost;
+
         const container = document.getElementById('player-profile-container');
         container.innerHTML = `
             <h3>Resumen de Rendimiento</h3>
@@ -245,8 +249,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <hr>
 
             <h3>Detalle de Sets y Juegos</h3>
-            <p><strong>Sets ganados:</strong> ${player.setsWon} / <strong>Sets perdidos:</strong> ${player.setsLost}</p>
-            <p><strong>Juegos ganados:</strong> ${player.gamesWon} / <strong>Juegos perdidos:</strong> ${player.gamesLost}</p>
+            <p><strong>Sets ganados:</strong> ${player.setsWon} / <strong>Sets perdidos:</strong> ${player.setsLost} (Diferencia: ${setDifference > 0 ? '+' : ''}${setDifference})</p>
+            <p><strong>Juegos ganados:</strong> ${player.gamesWon} / <strong>Juegos perdidos:</strong> ${player.gamesLost} (Diferencia: ${gameDifference > 0 ? '+' : ''}${gameDifference})</p>
 
             <hr>
 
@@ -261,28 +265,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const sortedPartnerStats = partnerStats.sort((a, b) => b.pointsPerMatch - a.pointsPerMatch);
         return `
             <h3>Rendimiento con Parejas</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Compañero</th>
-                        <th>Puntos/Partido</th>
-                        <th>Victorias</th>
-                        <th>Derrotas</th>
-                        <th>Empates</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${sortedPartnerStats.map(stat => `
+            <div class="table-container">
+                <table>
+                    <thead>
                         <tr>
-                            <td>${stat.partnerName}</td>
-                            <td>${stat.pointsPerMatch.toFixed(2)}</td>
-                            <td>${stat.wins}</td>
-                            <td>${stat.losses}</td>
-                            <td>${stat.ties}</td>
+                            <th>Compañero</th>
+                            <th>Puntos/Partido</th>
+                            <th>Victorias</th>
+                            <th>Derrotas</th>
+                            <th>Empates</th>
                         </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        ${sortedPartnerStats.map(stat => `
+                            <tr>
+                                <td>${stat.partnerName}</td>
+                                <td>${stat.pointsPerMatch.toFixed(2)}</td>
+                                <td>${stat.wins}</td>
+                                <td>${stat.losses}</td>
+                                <td>${stat.ties}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
         `;
     };
 
@@ -291,28 +297,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const sortedRivalStats = rivalStats.sort((a, b) => a.pointsPerMatch - b.pointsPerMatch);
         return `
             <h3>Rendimiento contra Rivales</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rival</th>
-                        <th>Puntos/Partido</th>
-                        <th>Victorias</th>
-                        <th>Derrotas</th>
-                        <th>Empates</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${sortedRivalStats.map(stat => `
+            <div class="table-container">
+                <table>
+                    <thead>
                         <tr>
-                            <td>${stat.rivalName}</td>
-                            <td>${stat.pointsPerMatch.toFixed(2)}</td>
-                            <td>${stat.wins}</td>
-                            <td>${stat.losses}</td>
-                            <td>${stat.ties}</td>
+                            <th>Rival</th>
+                            <th>Puntos/Partido</th>
+                            <th>Victorias</th>
+                            <th>Derrotas</th>
+                            <th>Empates</th>
                         </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        ${sortedRivalStats.map(stat => `
+                            <tr>
+                                <td>${stat.rivalName}</td>
+                                <td>${stat.pointsPerMatch.toFixed(2)}</td>
+                                <td>${stat.wins}</td>
+                                <td>${stat.losses}</td>
+                                <td>${stat.ties}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
         `;
     };
 
@@ -476,8 +484,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        const matchWithMaxDiff = matches.find(m => m.id_partido === maxGameDiffSet.matchId);
+        
         const playerWithMostMatches = playersStats.sort((a, b) => b.matchesPlayed - a.matchesPlayed)[0];
 
+        const allWinStreaks = playersStats.map(p => p.maxWinStreak);
+        const maxWinStreak = Math.max(...allWinStreaks);
+        const playerWithMaxWinStreak = playersStats.find(p => p.maxWinStreak === maxWinStreak);
+
+        const allLossStreaks = playersStats.map(p => p.maxLossStreak);
+        const maxLossStreak = Math.max(...allLossStreaks);
+        const playerWithMaxLossStreak = playersStats.find(p => p.maxLossStreak === maxLossStreak);
+        
         let pairsPlayedCount = {};
         match_couples.forEach(mp => {
             const matchResult = results.find(r => r.id_partido === mp.id_partido);
@@ -491,14 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const mostPlayedPairKey = Object.keys(pairsPlayedCount).sort((a, b) => pairsPlayedCount[b] - pairsPlayedCount[a])[0];
         const mostPlayedPairIds = mostPlayedPairKey ? mostPlayedPairKey.split('-') : [null, null];
         const mostPlayedPairNames = mostPlayedPairIds.map(id => players.find(p => p.id_jugador == id)?.nombre).join(' y ');
-
-        const allWinStreaks = playersStats.map(p => p.maxWinStreak);
-        const maxWinStreak = Math.max(...allWinStreaks);
-
-        const allLossStreaks = playersStats.map(p => p.maxLossStreak);
-        const maxLossStreak = Math.max(...allLossStreaks);
         
-        // Parejas habituales e inéditas
         const mostPlayedPairs = Object.entries(pairsPlayedCount)
             .sort(([, countA], [, countB]) => countB - countA)
             .map(([key, count]) => {
@@ -509,8 +520,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     count
                 };
             });
-
-        const newPairs = mostPlayedPairs.filter(p => p.count === 1);
 
         const playedPairsKeys = new Set(Object.keys(pairsPlayedCount));
         const allPossiblePairs = [];
@@ -530,11 +539,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <h3>Curiosidades y Récords</h3>
             <ul>
-                <li><strong>Mayor diferencia de juegos en un set:</strong> ${maxGameDiffSet.diff} juegos (${maxGameDiffSet.games})</li>
+                <li><strong>Mayor diferencia de juegos en un set:</strong> ${maxGameDiffSet.diff} juegos (${maxGameDiffSet.games}) en el partido del ${matchWithMaxDiff ? matchWithMaxDiff.fecha : 'N/A'}.</li>
                 <li><strong>Jugador con más partidos jugados:</strong> ${playerWithMostMatches ? playerWithMostMatches.nombre : 'N/A'} (${playerWithMostMatches ? playerWithMostMatches.matchesPlayed : 0} partidos)</li>
                 <li><strong>Pareja con más partidos jugados:</strong> ${mostPlayedPairNames ? mostPlayedPairNames : 'N/A'} (${pairsPlayedCount[mostPlayedPairKey] || 0} partidos)</li>
-                <li><strong>Racha de victorias más larga:</strong> ${maxWinStreak} partidos</li>
-                <li><strong>Racha de derrotas más larga:</strong> ${maxLossStreak} partidos</li>
+                <li><strong>Racha de victorias más larga:</strong> ${playerWithMaxWinStreak ? playerWithMaxWinStreak.nombre : 'N/A'} con ${maxWinStreak} partidos.</li>
+                <li><strong>Racha de derrotas más larga:</strong> ${playerWithMaxLossStreak ? playerWithMaxLossStreak.nombre : 'N/A'} con ${maxLossStreak} partidos.</li>
             </ul>
 
             <h3>Parejas Habituales</h3>
@@ -557,14 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </table>
             </div>
 
-            <h3>Parejas Inéditas</h3>
-            <h4>Parejas nuevas (1 partido)</h4>
-            <div id="new-pairs-list">
-                <ul>
-                    ${newPairs.map(p => `<li>${p.name1} y ${p.name2}</li>`).join('')}
-                </ul>
-            </div>
-            <h4>Parejas por estrenar</h4>
+            <h3>Parejas por estrenar</h3>
             <div id="unplayed-pairs-list">
                 <ul>
                     ${allPossiblePairs.map(p => `<li>${p.name1} y ${p.name2}</li>`).join('')}
@@ -598,9 +600,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let playerTeam = null;
             if (selectedPlayerId) {
+                // CORRECCIÓN: Usar parseInt() para comparar el ID del jugador
+                const playerIdInt = parseInt(selectedPlayerId);
                 const playerCoupleData = match_couples.find(mp => {
                     const pair = couples.find(p => p.id_pareja === mp.id_pareja);
-                    return mp.id_partido === match.id_partido && (pair.id_jugador1 === selectedPlayerId || pair.id_jugador2 === selectedPlayerId);
+                    return mp.id_partido === match.id_partido && (pair.id_jugador1 === playerIdInt || pair.id_jugador2 === playerIdInt);
                 });
 
                 if (!playerCoupleData) return false;
@@ -631,6 +635,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const couple1Data = matchCouplesData.find(mp => mp.equipo === 1);
             const couple2Data = matchCouplesData.find(mp => mp.equipo === 2);
             
+            // CORRECCIÓN: Comprobar si los datos de la pareja existen antes de usarlos
+            if (!couple1Data || !couple2Data) {
+                return '';
+            }
+
             const couple1 = couples.find(p => p.id_pareja === couple1Data.id_pareja);
             const couple2 = couples.find(p => p.id_pareja === couple2Data.id_pareja);
             
