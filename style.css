@@ -180,32 +180,31 @@ tbody tr:hover {
         gap: 0.5rem;
     }
     
-    /* Regla general para tablas que no necesitan scroll */
     .table-container table {
         min-width: unset;
     }
 
-    /* SOLUCIÓN PARA TABLAS ESPECÍFICAS EN MÓVILES (ej. Clasificación y Parejas Habituales) */
+    /* Regla para tablas que se convierten en tarjetas */
     #ranking-container table thead, 
-    #habitual-pairs-table table thead {
+    #history-container table thead {
         display: none;
     }
 
     #ranking-container table,
     #ranking-container table tr,
-    #habitual-pairs-table table,
-    #habitual-pairs-table table tr {
+    #history-container table,
+    #history-container table tr {
         display: block;
         margin-bottom: 1rem;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         border: none;
-        width: 95%;
-        margin: 0.5rem auto;
+        width: 100%; /* Las tarjetas de clasificación ocupan todo el ancho */
+        margin: 0.5rem 0;
     }
 
     #ranking-container table td,
-    #habitual-pairs-table table td {
+    #history-container table td {
         display: block;
         text-align: right;
         border-bottom: 1px solid #eee;
@@ -216,7 +215,7 @@ tbody tr:hover {
     }
 
     #ranking-container table td::before,
-    #habitual-pairs-table table td::before {
+    #history-container table td::before {
         content: attr(data-label);
         font-weight: bold;
         float: left;
@@ -225,7 +224,7 @@ tbody tr:hover {
     }
 
     #ranking-container table tr td:first-child,
-    #habitual-pairs-table table tr td:first-child {
+    #history-container table tr td:first-child {
         background-color: #e8eaf6;
         color: #3f51b5;
         font-size: 1.1rem;
@@ -234,4 +233,5 @@ tbody tr:hover {
         border-radius: 8px 8px 0 0;
         padding: 1rem 0;
     }
+
 }

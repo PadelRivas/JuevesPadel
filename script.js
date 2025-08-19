@@ -486,6 +486,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const matchWithMaxDiff = matches.find(m => m.id_partido === maxGameDiffSet.matchId);
         
+        // Obtener los nombres de los jugadores del partido con mayor diferencia de juegos
+        let playersWithMaxDiff = 'N/A';
+        if (matchWithMaxDiff) {
+            const matchCouplesData = match_couples.filter(mp => mp.id_partido === matchWithMaxDiff.id_partido);
+            const couple1Data = matchCouplesData.find(mp => mp.equipo === 1);
+            const couple2Data = matchCouplesData.find(mp => mp.equipo === 2);
+            if (couple1Data && couple2Data) {
+                const couple1 = couples.find(p => p.id_pareja === couple1Data.id_pareja);
+                const couple2 = couples.find(p => p.id_pareja === couple2Data.id_pareja);
+                const player1Names = `${players.find(p => p.id_jugador === couple1.id_jugador1)?.nombre} y ${players.find(p => p.id_jugador === couple1.id_jugador2)?.nombre}`;
+                const player2Names = `${players.find(p => p.id_jugador === couple2.id_jugador1)?.nombre} y ${players.find(p => p.id_jugador === couple2.id_jugador2)?.nombre}`;
+                playersWithMaxDiff = `${player1Names} vs ${player2Names}`;
+            }
+        }
+
         const playerWithMostMatches = playersStats.sort((a, b) => b.matchesPlayed - a.matchesPlayed)[0];
 
         const allWinStreaks = playersStats.map(p => p.maxWinStreak);
@@ -539,7 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <h3>Curiosidades y Récords</h3>
             <ul>
-                <li><strong>Mayor diferencia de juegos en un set:</strong> ${maxGameDiffSet.diff} juegos (${maxGameDiffSet.games}) en el partido del ${matchWithMaxDiff ? matchWithMaxDiff.fecha : 'N/A'}.</li>
+                <li><strong>Mayor diferencia de juegos en un set:</strong> ${maxGameDiffSet.diff} juegos (${maxGameDiffSet.games}) en el partido del ${matchWithMaxDiff ? matchWithMaxDiff.fecha : 'N/A'}. Jugadores: ${playersWithMaxDiff}</li>
                 <li><strong>Jugador con más partidos jugados:</strong> ${playerWithMostMatches ? playerWithMostMatches.nombre : 'N/A'} (${playerWithMostMatches ? playerWithMostMatches.matchesPlayed : 0} partidos)</li>
                 <li><strong>Pareja con más partidos jugados:</strong> ${mostPlayedPairNames ? mostPlayedPairNames : 'N/A'} (${pairsPlayedCount[mostPlayedPairKey] || 0} partidos)</li>
                 <li><strong>Racha de victorias más larga:</strong> ${playerWithMaxWinStreak ? playerWithMaxWinStreak.nombre : 'N/A'} con ${maxWinStreak} partidos.</li>
@@ -669,11 +684,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return `
                 <tr>
-                    <td>${match.fecha}</td>
-                    <td>${player1Pair1} y ${player2Pair1} vs ${player1Pair2} y ${player2Pair2}</td>
-                    <td>${result}</td>
-                    <td>${winnerText}</td>
-                    <td>${pointsText}</td>
+                    <td data-label="Fecha">${match.fecha}</td>
+                    <td data-label="Equipos">${player1Pair1} y ${player2Pair1} vs ${player1Pair2} y ${player2Pair2}</td>
+                    <td data-label="Resultado Final">${result}</td>
+                    <td data-label="Resultado del Partido">${winnerText}</td>
+                    <td data-label="Puntos del Partido">${pointsText}</td>
                 </tr>
             `;
         }).join('');
