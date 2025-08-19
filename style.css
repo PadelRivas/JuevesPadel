@@ -152,6 +152,10 @@ tbody tr:hover {
     border-radius: 4px;
 }
 
+/* ------------------------------------------- */
+/* MEJORAS PARA MÓVIL */
+/* ------------------------------------------- */
+
 @media (max-width: 768px) {
     body {
         font-size: 14px;
@@ -159,6 +163,8 @@ tbody tr:hover {
 
     .content-container {
         padding: 1rem;
+        max-width: 100%; /* Asegura que el contenedor se expanda al máximo */
+        box-sizing: border-box; /* Incluye padding y borde en el ancho total */
     }
 
     h2, h3 {
@@ -182,6 +188,7 @@ tbody tr:hover {
     
     .table-container table {
         min-width: unset;
+        width: 100%; /* Esta es la línea crucial para el ancho de la tabla */
     }
 
     /* Regla para tablas que se convierten en tarjetas */
@@ -190,17 +197,13 @@ tbody tr:hover {
         display: none;
     }
 
-    #ranking-container table,
     #ranking-container table tr,
-    #history-container table,
     #history-container table tr {
         display: block;
         margin-bottom: 1rem;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         border: none;
-        width: 100%;
-        margin: 0.5rem 0;
     }
 
     #ranking-container table td,
@@ -212,7 +215,7 @@ tbody tr:hover {
         padding-bottom: 0.75rem;
         padding-right: 1rem;
         position: relative;
-        white-space: normal; /* Permite que el texto se ajuste y no se corte */
+        white-space: normal;
     }
 
     #ranking-container table td::before,
@@ -234,5 +237,4 @@ tbody tr:hover {
         border-radius: 8px 8px 0 0;
         padding: 1rem 0;
     }
-
 }
