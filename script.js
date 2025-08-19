@@ -187,9 +187,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('ranking-container');
 
         const tableContent = sortedPlayers.map((player, index) => {
+            // Lógica para añadir emoticonos de medalla al podio
+            let medal = '';
+            if (index === 0) {
+                medal = '🥇';
+            } else if (index === 1) {
+                medal = '🥈';
+            } else if (index === 2) {
+                medal = '🥉';
+            }
+            
             return `
                 <tr>
-                    <td data-label="Posición">${index + 1}</td>
+                    <td data-label="Posición">${index + 1} ${medal}</td>
                     <td data-label="Nombre">${player.nombre}</td>
                     <td data-label="Puntos por Partido">${player.pointsPerMatch.toFixed(2)}</td>
                     <td data-label="Puntos Totales">${player.totalPoints}</td>
