@@ -199,7 +199,7 @@ tbody tr:hover {
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         border: none;
-        width: 100%; /* Las tarjetas de clasificación ocupan todo el ancho */
+        width: 100%;
         margin: 0.5rem 0;
     }
 
@@ -212,6 +212,7 @@ tbody tr:hover {
         padding-bottom: 0.75rem;
         padding-right: 1rem;
         position: relative;
+        white-space: normal; /* Permite que el texto se ajuste y no se corte */
     }
 
     #ranking-container table td::before,
