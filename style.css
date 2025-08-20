@@ -201,15 +201,17 @@ footer {
     .chart-container {
         padding: 0;
     }
-
-    /* Ocultamos las cabeceras de las tablas para ranking e historial */
-    #ranking-container thead, #history-container thead {
+    
+    /* Adaptación de tablas a tarjetas para móvil */
+    #ranking-container thead,
+    #history-container thead {
         position: absolute;
         top: -9999px;
         left: -9999px;
     }
 
-    #ranking-container tr, #history-container tr {
+    #ranking-container tr,
+    #history-container tr {
         display: block;
         margin-bottom: 1rem;
         border-radius: 10px;
@@ -218,12 +220,13 @@ footer {
         background-color: var(--color-accent-2); 
     }
     
-    #ranking-container tr:nth-child(even), #history-container tr:nth-child(even) {
+    #ranking-container tr:nth-child(even),
+    #history-container tr:nth-child(even) {
         background-color: var(--color-background);
     }
 
-    /* Estilo de tarjeta corregido con Flexbox */
-    #ranking-container td, #history-container td {
+    #ranking-container td,
+    #history-container td {
         display: flex;
         justify-content: space-between;
         padding: 12px 15px;
@@ -231,7 +234,8 @@ footer {
         text-align: right;
     }
 
-    #ranking-container td::before, #history-container td::before {
+    #ranking-container td::before,
+    #history-container td::before {
         content: attr(data-label);
         flex-basis: 50%;
         text-align: left;
@@ -240,6 +244,25 @@ footer {
         font-weight: bold;
     }
     
+    /* Estilo para las tablas de Rendimiento (manteniendo el formato de tabla) */
+    .performance-table-container {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .performance-table {
+        width: 100%;
+        min-width: 500px; /* Asegura que la tabla no se comprima demasiado */
+    }
+
+    .performance-table th, .performance-table td {
+        white-space: nowrap; /* Evita que el texto se salte de línea */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es muy largo */
+        padding: 8px 10px; /* Reduce el padding para ahorrar espacio */
+    }
+
     /* Mantenemos el estilo de tabla para las parejas habituales */
     #habitual-pairs-table table, #habitual-pairs-table thead, #habitual-pairs-table tbody, #habitual-pairs-table th, #habitual-pairs-table td, #habitual-pairs-table tr {
         display: revert;
