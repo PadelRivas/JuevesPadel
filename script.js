@@ -435,11 +435,102 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // --- Lógica para el nuevo gráfico de evolución de ranking ---
+    const getRankingEvolutionData = () => {
+        const playerPoints = {};
+        players.forEach(p => playerPoints[p.id_jugador] = 0);
+        
+        const playedMatches = matches.filter(match => {
+            const result = results.find(r => r.id_partido === match.id_partido);
+            return result && result.equipo_ganador !== -1;
+        }).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+        const labels = playedMatches.map(m => m.fecha);
+        const datasets = {};
+        players.forEach(p => {
+            datasets[p.nombre] = {
+                label: p.nombre,
+                data: [],
+                borderColor: '#' + Math.floor(Math.random()*16777215).toString(16),
+                tension: 0.4
+            };
+        });
+
+        playedMatches.forEach(match => {
+            const matchCouples = match_couples.filter(mp => mp.id_partido === match.id_partido);
+            const playersInMatch = new Set();
+            matchCouples.forEach(mp => {
+                const couple = couples.find(c => c.id_pareja === mp.id_pareja);
+                playersInMatch.add(couple.id_jugador1);
+                playersInMatch.add(couple.id_jugador2);
+            });
+
+            // Actualizar puntos de los jugadores que participaron en este partido
+            playersInMatch.forEach(playerId => {
+                const points = calculatePlayerPoints(playerId, match.id_partido);
+                playerPoints[playerId] += points;
+            });
+
+            // Calcular el ranking actual
+            const currentRanking = players.map(p => ({
+                id: p.id_jugador,
+                nombre: p.nombre,
+                puntos: playerPoints[p.id_jugador]
+            })).sort((a, b) => b.puntos - a.puntos);
+
+            // Guardar la posición de cada jugador
+            players.forEach(p => {
+                const rank = currentRanking.findIndex(r => r.id === p.id_jugador) + 1;
+                datasets[p.nombre].data.push(rank);
+            });
+        });
+        
+        return { labels, datasets: Object.values(datasets) };
+    };
+
+    const renderRankingEvolutionChart = () => {
+        const rankingData = getRankingEvolutionData();
+        const ctx = document.getElementById('rankingEvolutionChart').getContext('2d');
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: rankingData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        reverse: true,
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Posición en la Clasificación'
+                        },
+                        ticks: {
+                            stepSize: 1
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Partidos'
+                        }
+                    }
+                }
+            }
+        });
+    };
+
+    // --- Función de renderizado de la pestaña de Métricas ---
     const renderMetrics = () => {
         const container = document.getElementById('metrics-container');
         const chartCanvas = document.getElementById('evolutionChart');
         container.innerHTML = '';
         
+        // Renderizar el nuevo gráfico de ranking
+        renderRankingEvolutionChart();
+
+        // CÁLCULO Y GENERACIÓN DEL GRÁFICO DE MÉTRICAS GENERALES
         const allPlayedMatches = matches.filter(match => {
             const matchResult = results.find(r => r.id_partido === match.id_partido);
             return matchResult && matchResult.equipo_ganador !== -1;
