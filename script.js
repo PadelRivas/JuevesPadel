@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <table class="performance-table">
                 <thead>
                     <tr>
-                        <th>Compañero</th>
+                        <th>COMPA</th>
                         <th>P/P</th>
                         <th>V</th>
                         <th>D</th>

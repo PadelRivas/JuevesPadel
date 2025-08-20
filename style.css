@@ -248,12 +248,11 @@ footer {
     .performance-table {
         table-layout: fixed;
         width: 100%;
-        min-width: 400px;
     }
 
     .performance-table th, .performance-table td {
-        padding: 6px 4px;
-        font-size: 0.7rem;
+        padding: 4px 2px;
+        font-size: 0.6rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
