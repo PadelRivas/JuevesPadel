@@ -435,7 +435,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // --- Lógica para el nuevo gráfico de evolución de ranking ---
     const getRankingEvolutionData = () => {
         const playerPoints = {};
         players.forEach(p => playerPoints[p.id_jugador] = 0);
@@ -445,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return result && result.equipo_ganador !== -1;
         }).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
-        const labels = playedMatches.map(m => m.fecha);
+        const labels = Array.from({length: playedMatches.length}, (_, i) => `Partido ${i + 1}`);
         const datasets = {};
         players.forEach(p => {
             datasets[p.nombre] = {
@@ -465,20 +464,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 playersInMatch.add(couple.id_jugador2);
             });
 
-            // Actualizar puntos de los jugadores que participaron en este partido
             playersInMatch.forEach(playerId => {
                 const points = calculatePlayerPoints(playerId, match.id_partido);
                 playerPoints[playerId] += points;
             });
 
-            // Calcular el ranking actual
             const currentRanking = players.map(p => ({
                 id: p.id_jugador,
                 nombre: p.nombre,
                 puntos: playerPoints[p.id_jugador]
             })).sort((a, b) => b.puntos - a.puntos);
 
-            // Guardar la posición de cada jugador
             players.forEach(p => {
                 const rank = currentRanking.findIndex(r => r.id === p.id_jugador) + 1;
                 datasets[p.nombre].data.push(rank);
@@ -498,13 +494,14 @@ document.addEventListener('DOMContentLoaded', () => {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                aspectRatio: 1.5,
                 scales: {
                     y: {
                         reverse: true,
                         beginAtZero: false,
                         title: {
                             display: true,
-                            text: 'Posición en la Clasificación'
+                            text: 'Clasificación'
                         },
                         ticks: {
                             stepSize: 1
@@ -513,19 +510,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     x: {
                         title: {
                             display: true,
-                            text: 'Partidos'
+                            text: 'Número de Partido'
+                        },
+                        ticks: {
+                            display: false
                         }
                     }
                 }
-            }
-        });
+            });
     };
 
-    // --- Función de renderizado de la pestaña de Métricas ---
     const renderMetrics = () => {
         const container = document.getElementById('metrics-container');
         const chartCanvas = document.getElementById('evolutionChart');
-        container.innerHTML = '';
         
         // Renderizar el nuevo gráfico de ranking
         renderRankingEvolutionChart();
@@ -567,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         tension: 0.1,
                         yAxisID: 'y'
                     }, {
-                        label: 'Promedio de Juegos por Set',
+                        label: 'Promedio de Juegos por Partido',
                         data: avgGamesData,
                         borderColor: '#4CAF50',
                         backgroundColor: 'rgba(76, 175, 80, 0.2)',
