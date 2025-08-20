@@ -163,8 +163,8 @@ tbody tr:hover {
 
     .content-container {
         padding: 1rem;
-        max-width: 100%; /* Asegura que el contenedor se expanda al máximo */
-        box-sizing: border-box; /* Incluye padding y borde en el ancho total */
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     h2, h3 {
@@ -188,7 +188,7 @@ tbody tr:hover {
     
     .table-container table {
         min-width: unset;
-        width: 100%; /* Esta es la línea crucial para el ancho de la tabla */
+        width: 100%;
     }
 
     /* Regla para tablas que se convierten en tarjetas */
@@ -236,5 +236,17 @@ tbody tr:hover {
         text-align: center;
         border-radius: 8px 8px 0 0;
         padding: 1rem 0;
+    }
+
+    /* NUEVA REGLA PARA HACER LAS TABLAS DEL JUGADOR RESPONSIVAS */
+    /* Se aplica a las tablas dentro del contenedor del perfil del jugador */
+    #player-profile-container table {
+        min-width: unset;
+        font-size: 0.8rem; /* Reduce el tamaño de la fuente para que el texto quepa */
+    }
+
+    #player-profile-container table th,
+    #player-profile-container table td {
+        padding: 8px; /* Reduce el relleno para ganar espacio */
     }
 }
