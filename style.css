@@ -171,6 +171,10 @@ footer {
 
 /* Responsive design */
 @media (max-width: 768px) {
+    main {
+        padding: 0; /* Ahorramos los 16px de cada lado para aprovechar todo el ancho */
+    }
+
     .tab-buttons {
         flex-direction: column;
     }
