@@ -508,7 +508,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const rankingData = getRankingEvolutionData();
         const ctx = document.getElementById('rankingEvolutionChart').getContext('2d');
         
-        // Destroy existing chart if it exists
         if (window.rankingEvolutionChartInstance) {
             window.rankingEvolutionChartInstance.destroy();
         }
@@ -575,7 +574,6 @@ document.addEventListener('DOMContentLoaded', () => {
             avgGamesData.push((totalGames / numMatches).toFixed(2));
         });
 
-        // Destroy existing chart if it exists
         if (window.metricsChartInstance) {
             window.metricsChartInstance.destroy();
         }
@@ -647,7 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const allSets = sets.filter(s => {
-            const matchResult = results.find(r => r.id_partido === s.id_partido);
+            const matchResult = results.find(r => r.id_partido === s.id_id_partido);
             return matchResult && matchResult.equipo_ganador !== -1;
         });
         

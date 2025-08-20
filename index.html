@@ -3,59 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Padel - Cuadro de Mando</title>
+    <title>Padel Stats</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
-        <h1>Cuadro de Mando</h1>
+        <h1>🎾 Padel Stats 🎾</h1>
     </header>
 
-    <div class="tabs">
-        <button class="tab-button active" data-tab="ranking">Clasificación</button>
-        <button class="tab-button" data-tab="player">Jugador</button>
-        <button class="tab-button" data-tab="metrics">Métricas</button>
-        <button class="tab-button" data-tab="history">Historial de Partidos</button>
-    </div>
+    <main>
+        <nav class="tab-buttons">
+            <button class="tab-button active" data-tab="ranking">Clasificación</button>
+            <button class="tab-button" data-tab="player">Jugador</button>
+            <button class="tab-button" data-tab="metrics">Métricas</button>
+            <button class="tab-button" data-tab="history">Historial</button>
+        </nav>
 
-    <main class="content-container">
-        <div id="ranking" class="tab-pane active">
-            <h2>Clasificación por Puntos</h2>
+        <section id="ranking" class="tab-pane active">
+            <h2>Clasificación de Jugadores</h2>
             <div id="ranking-container" class="table-container"></div>
-        </div>
+        </section>
 
-        <div id="player" class="tab-pane">
-            <h2>Estadísticas del Jugador</h2>
-            <div class="player-controls">
-                <label for="player-select">Selecciona un Jugador:</label>
+        <section id="player" class="tab-pane">
+            <h2>Estadísticas de Jugador</h2>
+            <div class="filter-controls">
                 <select id="player-select"></select>
             </div>
-            <div id="player-profile-container">
-                <p>Selecciona un jugador para ver sus estadísticas.</p>
-            </div>
-        </div>
+            <div id="player-profile-container" class="card"></div>
+        </section>
 
-        <div id="metrics" class="tab-pane">
-            <h2>Evolución de la Clasificación</h2>
+        <section id="metrics" class="tab-pane">
+            <h2>Métricas Generales</h2>
             <div class="chart-container">
                 <canvas id="rankingEvolutionChart"></canvas>
             </div>
-            
-            <h2>Métricas Generales</h2>
             <div class="chart-container">
                 <canvas id="evolutionChart"></canvas>
             </div>
-            <div id="metrics-container" class="metrics-container"></div>
-        </div>
+            <div id="metrics-container" class="card"></div>
+        </section>
 
-        <div id="history" class="tab-pane">
+        <section id="history" class="tab-pane">
             <h2>Historial de Partidos</h2>
-            <div class="history-filters">
-                <label for="month-filter">Mes:</label>
+            <div class="filter-controls">
                 <select id="month-filter">
                     <option value="">Todos los meses</option>
                     <option value="1">Enero</option>
@@ -71,23 +63,23 @@
                     <option value="11">Noviembre</option>
                     <option value="12">Diciembre</option>
                 </select>
-
-                <label for="player-filter">Jugador:</label>
                 <select id="player-filter"></select>
-
-                <label for="result-filter">Resultado:</label>
                 <select id="result-filter">
                     <option value="">Todos los resultados</option>
-                    <option value="won">Victoria</option>
-                    <option value="lost">Derrota</option>
-                    <option value="tied">Empate</option>
+                    <option value="won">Ganado</option>
+                    <option value="lost">Perdido</option>
+                    <option value="tied">Empatado</option>
                 </select>
             </div>
             <div id="history-container" class="table-container"></div>
-        </div>
+        </section>
     </main>
 
-    <script src="backend.js"></script>
+    <footer>
+        <p>Desarrollado con ❤️ para los amantes del pádel.</p>
+    </footer>
+
+    <script src="app-data.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
