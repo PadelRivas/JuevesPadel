@@ -645,7 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const allSets = sets.filter(s => {
-            const matchResult = results.find(r => r.id_partido === s.id_id_partido);
+            const matchResult = results.find(r => r.id_partido === s.id_partido);
             return matchResult && matchResult.equipo_ganador !== -1;
         });
         

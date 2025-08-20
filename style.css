@@ -47,6 +47,7 @@ main {
     border-radius: 10px;
     background-color: var(--color-accent-2);
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    flex-wrap: wrap;
 }
 
 .tab-button {
@@ -176,50 +177,51 @@ footer {
     }
 
     .tab-buttons {
-        flex-direction: column;
+        flex-direction: row; /* Pestañas en horizontal */
     }
 
     .tab-button {
         border-radius: 0;
         border-bottom: 1px solid var(--color-accent-2);
     }
-
+    
     .tab-button:first-child {
-        border-radius: 10px 10px 0 0;
+        border-radius: 10px 0 0 10px;
     }
     
     .tab-button:last-child {
-        border-radius: 0 0 10px 10px;
+        border-radius: 0 10px 10px 0;
         border-bottom: none;
     }
 
-    /* Tabla responsive */
-    table, thead, tbody, th, td, tr {
-        display: block;
+    .tab-pane {
+        padding: 1rem;
     }
 
-    thead tr {
+    /* Ocultamos las cabeceras de las tablas para ranking e historial */
+    #ranking-container thead, #history-container thead {
         position: absolute;
         top: -9999px;
         left: -9999px;
     }
 
-    tr {
-        margin-bottom: 1rem;
+    #ranking-container tr, #history-container tr {
+        display: block;
+        margin-bottom: 1rem; /* Espacio entre tarjetas */
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        background-color: var(--color-background); /* Fondo de la tarjeta */
+        background-color: var(--color-background);
     }
 
-    td {
+    #ranking-container td, #history-container td {
         border: none;
         position: relative;
         padding-left: 50%;
         text-align: right;
     }
 
-    td::before {
+    #ranking-container td::before, #history-container td::before {
         content: attr(data-label);
         position: absolute;
         left: 0;
@@ -228,5 +230,23 @@ footer {
         white-space: nowrap;
         text-align: left;
         font-weight: bold;
+    }
+    
+    /* Mantenemos el estilo de tabla para las parejas habituales */
+    #habitual-pairs-table table, #habitual-pairs-table thead, #habitual-pairs-table tbody, #habitual-pairs-table th, #habitual-pairs-table td, #habitual-pairs-table tr {
+        display: revert;
+    }
+
+    #habitual-pairs-table tr {
+        margin-bottom: 0;
+    }
+
+    #habitual-pairs-table td {
+        padding-left: 12px;
+        text-align: left;
+    }
+
+    #habitual-pairs-table td::before {
+        content: none;
     }
 }
