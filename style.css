@@ -199,7 +199,7 @@ footer {
     }
     
     .chart-container {
-        padding: 0; /* Elimina el padding para que los gráficos ocupen todo el ancho */
+        padding: 0;
     }
 
     /* Ocultamos las cabeceras de las tablas para ranking e historial */
@@ -215,6 +215,13 @@ footer {
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        /* Ajuste de color de fondo para que las tarjetas
+           impares y pares se distingan en la vista móvil.
+        */
+        background-color: var(--color-accent-2); 
+    }
+    
+    #ranking-container tr:nth-child(even), #history-container tr:nth-child(even) {
         background-color: var(--color-background);
     }
 
