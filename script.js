@@ -1,11 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Verificar si los datos del backend están disponibles
     if (typeof appData === 'undefined') {
         console.error('Los datos del backend no se han cargado (appData no está definido).');
         return;
     }
     
-    // Asignar los datos a variables locales
     const players = appData.jugadores;
     const matches = appData.partidos;
     const sets = appData.sets;
@@ -13,17 +11,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const couples = appData.parejas;
     const match_couples = appData.partido_pareja;
 
-    // --- LÓGICA DE NAVEGACIÓN DE PESTAÑAS ---
     const tabs = document.querySelectorAll('.tab-button');
     const panes = document.querySelectorAll('.tab-pane');
 
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const targetId = tab.dataset.tab;
-
             tabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
-
             panes.forEach(pane => {
                 if (pane.id === targetId) {
                     pane.classList.add('active');
@@ -32,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Llamar a la función de renderizado de la pestaña correspondiente
             if (targetId === 'ranking') {
                 renderRanking();
             } else if (targetId === 'player') {
@@ -44,14 +38,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-
-    // --- CÁLCULO DE MÉTRICAS (Lógica de negocio) ---
     
-    // Función para calcular puntos de un jugador en un partido
     const calculatePlayerPoints = (playerId, matchId) => {
         const matchResult = results.find(r => r.id_partido === matchId);
         if (!matchResult || matchResult.equipo_ganador === -1) {
-            return 0; // No se cuentan puntos en partidos suspendidos
+            return 0;
         }
 
         const matchSets = sets.filter(s => s.id_partido === matchId);
@@ -75,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 else totalGamesWon += s.juegos_equipo2;
             });
             return totalGamesWon;
-        } else { // Derrota
+        } else {
             let totalGamesWon = 0;
             matchSets.forEach(s => {
                 if (playerTeam === 1) totalGamesWon += s.juegos_equipo1;
@@ -85,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Función principal para obtener los datos de cada jugador
     const getPlayerStats = () => {
         const playerStatsMap = new Map();
 
@@ -98,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 ties: 0,
                 totalPoints: 0,
                 pointsPerMatch: 0,
-                // Nuevas propiedades para rastrear las rachas
                 currentWinStreak: 0,
                 maxWinStreak: 0,
                 currentLossStreak: 0,
@@ -146,7 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         stats.currentWinStreak = 0;
                     }
 
-                    // Actualizar las rachas máximas
                     if (stats.currentWinStreak > stats.maxWinStreak) {
                         stats.maxWinStreak = stats.currentWinStreak;
                     }
@@ -170,7 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Calcular puntos por partido y devolver el array
         const finalStats = Array.from(playerStatsMap.values()).map(stats => ({
             ...stats,
             pointsPerMatch: stats.matchesPlayed > 0 ? (stats.totalPoints / stats.matchesPlayed) : 0
@@ -181,7 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const playersStats = getPlayerStats();
 
-    // --- PESTAÑA CLASIFICACIÓN ---
     const renderRanking = () => {
         const sortedPlayers = [...playersStats].sort((a, b) => b.pointsPerMatch - a.pointsPerMatch);
         const container = document.getElementById('ranking-container');
@@ -231,10 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     };
 
-    // --- PESTAÑA JUGADOR ---
     const playerSelect = document.getElementById('player-select');
     
-    // Función para renderizar el perfil de un jugador específico
     const renderPlayerProfile = (playerId) => {
         const player = playersStats.find(p => p.id_jugador === playerId);
         if (!player) {
@@ -331,13 +315,11 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     };
 
-    // Llenar el select con los jugadores
     const populatePlayerSelect = () => {
         playerSelect.innerHTML = '<option value="">Selecciona un jugador</option>' + 
             players.map(p => `<option value="${p.id_jugador}">${p.nombre}</option>`).join('');
     };
 
-    // Manejar el evento de cambio del select
     playerSelect.addEventListener('change', (event) => {
         const selectedPlayerId = parseInt(event.target.value);
         if (selectedPlayerId) {
@@ -349,7 +331,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const getPartnerStats = (playerId) => {
         const stats = new Map();
-        
         const playerMatches = matches.filter(match => {
             const isSuspended = results.find(r => r.id_partido === match.id_partido)?.equipo_ganador === -1;
             if (isSuspended) return false;
@@ -454,13 +435,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // --- PESTAÑA MÉTRICAS ---
     const renderMetrics = () => {
         const container = document.getElementById('metrics-container');
         const chartCanvas = document.getElementById('evolutionChart');
         container.innerHTML = '';
         
-        // CÁLCULO DE LA EVOLUCIÓN PARA EL GRÁFICO
         const allPlayedMatches = matches.filter(match => {
             const matchResult = results.find(r => r.id_partido === match.id_partido);
             return matchResult && matchResult.equipo_ganador !== -1;
@@ -484,7 +463,6 @@ document.addEventListener('DOMContentLoaded', () => {
             avgGamesData.push((totalGames / numMatches).toFixed(2));
         });
 
-        // GENERACIÓN DEL GRÁFICO CON CHART.JS
         if (allPlayedMatches.length > 0) {
             new Chart(chartCanvas, {
                 type: 'line',
@@ -495,13 +473,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         data: avgSetsData,
                         borderColor: '#3f51b5',
                         backgroundColor: 'rgba(63, 81, 181, 0.2)',
-                        tension: 0.1
+                        tension: 0.1,
+                        yAxisID: 'y'
                     }, {
                         label: 'Promedio de Juegos por Set',
                         data: avgGamesData,
                         borderColor: '#4CAF50',
                         backgroundColor: 'rgba(76, 175, 80, 0.2)',
-                        tension: 0.1
+                        tension: 0.1,
+                        yAxisID: 'y1'
                     }]
                 },
                 options: {
@@ -509,10 +489,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     maintainAspectRatio: false,
                     scales: {
                         y: {
-                            beginAtZero: true,
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            min: 0,
+                            max: 3,
                             title: {
                                 display: true,
-                                text: 'Promedio'
+                                text: 'Promedio de Sets'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            min: 0,
+                            max: 40,
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Promedio de Juegos'
                             }
                         },
                         x: {
@@ -528,7 +526,6 @@ document.addEventListener('DOMContentLoaded', () => {
             chartCanvas.style.display = 'none';
         }
 
-        // Curiosidades y Récords (esto se mantiene igual)
         const allSets = sets.filter(s => {
             const matchResult = results.find(r => r.id_partido === s.id_partido);
             return matchResult && matchResult.equipo_ganador !== -1;
@@ -559,7 +556,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const playerWithMostMatches = playersStats.sort((a, b) => b.matchesPlayed - a.matchesPlayed)[0];
-
         const allWinStreaks = playersStats.map(p => p.maxWinStreak);
         const maxWinStreak = Math.max(...allWinStreaks);
         const playerWithMaxWinStreak = playersStats.find(p => p.maxWinStreak === maxWinStreak);
@@ -643,7 +639,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     };
 
-    // --- PESTAÑA HISTORIAL DE PARTIDOS ---
     const monthFilter = document.getElementById('month-filter');
     const playerFilter = document.getElementById('player-filter');
     const resultFilter = document.getElementById('result-filter');
@@ -762,12 +757,10 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     };
 
-    // Event listeners para los filtros
     monthFilter.addEventListener('change', renderHistory);
     playerFilter.addEventListener('change', renderHistory);
     resultFilter.addEventListener('change', renderHistory);
 
-    // Renderizar la pestaña inicial por defecto y los filtros de la pestaña de jugador
     renderRanking();
     populatePlayerSelect();
 });
