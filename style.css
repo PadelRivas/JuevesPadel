@@ -197,6 +197,10 @@ footer {
     .tab-pane {
         padding: 1rem;
     }
+    
+    .chart-container {
+        padding: 0; /* Elimina el padding para que los gráficos ocupen todo el ancho */
+    }
 
     /* Ocultamos las cabeceras de las tablas para ranking e historial */
     #ranking-container thead, #history-container thead {
@@ -216,18 +220,18 @@ footer {
 
     /* Estilo de tarjeta corregido con Flexbox */
     #ranking-container td, #history-container td {
-        display: flex; /* Usamos Flexbox para alinear el label y el valor */
-        justify-content: space-between; /* Espaciamos el label y el valor */
-        padding: 12px 15px; /* Padding normal */
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 15px;
         border-bottom: 1px solid var(--color-accent-2);
-        text-align: right; /* Alineamos el valor a la derecha */
+        text-align: right;
     }
 
     #ranking-container td::before, #history-container td::before {
         content: attr(data-label);
-        flex-basis: 50%; /* Damos una base de 50% al label */
-        text-align: left; /* Alineamos el label a la izquierda */
-        padding-right: 15px; /* Espacio entre el label y el valor */
+        flex-basis: 50%;
+        text-align: left;
+        padding-right: 15px;
         white-space: nowrap;
         font-weight: bold;
     }
