@@ -170,7 +170,7 @@ footer {
     margin-top: auto;
 }
 
-/* Responsive design good*/
+/* Responsive design */
 @media (max-width: 768px) {
     main {
         padding: 0;
@@ -244,29 +244,35 @@ footer {
         font-weight: bold;
     }
     
-    /* Estilo para las tablas de Rendimiento (manteniendo el formato de tabla) */
-    .performance-table-container {
-        /* Permite que el contenido se desborde sin afectar el layout general */
-        overflow-x: auto;
-    }
-    
+    /* SOLUCIÓN FINAL para las tablas de Rendimiento (manteniendo el formato de tabla) */
     .performance-table {
-        min-width: 100%;
         table-layout: fixed;
+        width: 100%;
+        min-width: 400px;
     }
 
     .performance-table th, .performance-table td {
-        padding: 6px 4px; /* Aún más pequeño */
-        white-space: normal;
+        padding: 6px 4px;
+        font-size: 0.7rem;
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        width: auto;
-        /* Forzamos a que las celdas se ajusten al contenido */
         word-wrap: break-word; 
-        box-sizing: border-box;
     }
 
     /* Mantenemos el estilo de tabla para las parejas habituales */
+    #habitual-pairs-table table {
+        width: 100%;
+        table-layout: fixed;
+    }
+    
+    #habitual-pairs-table table th, #habitual-pairs-table table td {
+        padding: 6px 4px;
+        font-size: 0.7rem;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+    
     #habitual-pairs-table table, #habitual-pairs-table thead, #habitual-pairs-table tbody, #habitual-pairs-table th, #habitual-pairs-table td, #habitual-pairs-table tr {
         display: revert;
     }

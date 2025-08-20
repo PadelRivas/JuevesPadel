@@ -274,30 +274,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const sortedPartnerStats = partnerStats.sort((a, b) => b.pointsPerMatch - a.pointsPerMatch);
         return `
             <h3>Rendimiento con Parejas</h3>
-            <div class="table-container">
-                <table>
-                    <thead>
+            <table class="performance-table">
+                <thead>
+                    <tr>
+                        <th>Compañero</th>
+                        <th>Puntos/Partido</th>
+                        <th>Victorias</th>
+                        <th>Derrotas</th>
+                        <th>Empates</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${sortedPartnerStats.map(stat => `
                         <tr>
-                            <th>Compañero</th>
-                            <th>Puntos/Partido</th>
-                            <th>Victorias</th>
-                            <th>Derrotas</th>
-                            <th>Empates</th>
+                            <td>${stat.partnerName}</td>
+                            <td>${stat.pointsPerMatch.toFixed(2)}</td>
+                            <td>${stat.wins}</td>
+                            <td>${stat.losses}</td>
+                            <td>${stat.ties}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        ${sortedPartnerStats.map(stat => `
-                            <tr>
-                                <td>${stat.partnerName}</td>
-                                <td>${stat.pointsPerMatch.toFixed(2)}</td>
-                                <td>${stat.wins}</td>
-                                <td>${stat.losses}</td>
-                                <td>${stat.ties}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
+                    `).join('')}
+                </tbody>
+            </table>
         `;
     };
 
@@ -306,30 +304,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const sortedRivalStats = rivalStats.sort((a, b) => a.pointsPerMatch - b.pointsPerMatch);
         return `
             <h3>Rendimiento contra Rivales</h3>
-            <div class="table-container">
-                <table>
-                    <thead>
+            <table class="performance-table">
+                <thead>
+                    <tr>
+                        <th>Rival</th>
+                        <th>Puntos/Partido</th>
+                        <th>Victorias</th>
+                        <th>Derrotas</th>
+                        <th>Empates</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${sortedRivalStats.map(stat => `
                         <tr>
-                            <th>Rival</th>
-                            <th>Puntos/Partido</th>
-                            <th>Victorias</th>
-                            <th>Derrotas</th>
-                            <th>Empates</th>
+                            <td>${stat.rivalName}</td>
+                            <td>${stat.pointsPerMatch.toFixed(2)}</td>
+                            <td>${stat.wins}</td>
+                            <td>${stat.losses}</td>
+                            <td>${stat.ties}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        ${sortedRivalStats.map(stat => `
-                            <tr>
-                                <td>${stat.rivalName}</td>
-                                <td>${stat.pointsPerMatch.toFixed(2)}</td>
-                                <td>${stat.wins}</td>
-                                <td>${stat.losses}</td>
-                                <td>${stat.ties}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
+                    `).join('')}
+                </tbody>
+            </table>
         `;
     };
 
