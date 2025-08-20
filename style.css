@@ -93,11 +93,33 @@ h2 {
     margin-bottom: 1.5rem;
 }
 
-.table-container {
-    overflow-x: auto;
-    width: 100%;
+.card {
+    padding: 2rem;
+    border-radius: 10px;
+    background-color: var(--color-text-light);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 2rem;
 }
 
+.chart-container {
+    width: 100%;
+    height: 400px;
+    margin-bottom: 2rem;
+    background-color: var(--color-text-light);
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+    margin-top: auto;
+}
+
+/* Reglas generales para tablas */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -144,32 +166,6 @@ select, input {
     font-size: 1rem;
 }
 
-.card {
-    padding: 2rem;
-    border-radius: 10px;
-    background-color: var(--color-text-light);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-top: 2rem;
-}
-
-.chart-container {
-    width: 100%;
-    height: 400px;
-    margin-bottom: 2rem;
-    background-color: var(--color-text-light);
-    padding: 1rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-footer {
-    text-align: center;
-    padding: 1rem;
-    background-color: var(--color-primary);
-    color: var(--color-text-light);
-    margin-top: auto;
-}
-
 /* Responsive design */
 @media (max-width: 768px) {
     main {
@@ -202,7 +198,7 @@ footer {
         padding: 0;
     }
     
-    /* Estilo de tarjeta para tablas en móvil (ranking e historial) */
+    /* Reglas para las tablas que se convierten en tarjetas */
     #ranking-container thead,
     #history-container thead {
         position: absolute;
@@ -244,27 +240,20 @@ footer {
         font-weight: bold;
     }
     
-    /* SOLUCIÓN DEFINITIVA para las tablas de Rendimiento (manteniendo el formato de tabla) */
-    .performance-table-container {
-        /* Eliminamos cualquier scroll para asegurar que no aparezca */
-        overflow-x: hidden;
-        width: 100%;
-        /* La clave está en comprimir el contenido desde el contenedor */
-        box-sizing: border-box;
+    /* SOLUCIÓN FINAL para las tablas de Rendimiento (manteniendo el formato de tabla) */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
-    
+
     .performance-table {
-        /* Hacemos la tabla 100% de ancha y le damos un layout fijo */
-        width: 100%;
-        table-layout: fixed;
+        /* Fuerza la tabla a ocupar el ancho mínimo para evitar compresión excesiva */
+        min-width: 500px;
     }
-    
+
     .performance-table th, .performance-table td {
-        /* Forzamos el tamaño de la fuente y el padding para que quepa todo */
-        font-size: 0.75rem !important; /* El !important anula cualquier otro estilo */
-        padding: 4px !important; /* El !important asegura que no se sobrescriba */
-        word-wrap: break-word; /* Permite que las palabras se corten si es necesario */
-        box-sizing: border-box;
+        padding: 8px;
+        white-space: nowrap; /* Evita que el texto se parta en varias líneas */
     }
 
     /* Mantenemos el estilo de tabla para las parejas habituales */

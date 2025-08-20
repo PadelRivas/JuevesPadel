@@ -3,83 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Padel Stats</title>
+    <title>Estadísticas del Club de Pádel</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+
     <header>
-        <h1>🎾 Pádel Jueves 🎾</h1>
+        <h1>Club de Pádel: Resumen de Estadísticas</h1>
     </header>
 
     <main>
-        <nav class="tab-buttons">
-            <button class="tab-button active" data-tab="ranking">Clasificación</button>
-            <button class="tab-button" data-tab="player">Jugador</button>
-            <button class="tab-button" data-tab="metrics">Métricas</button>
-            <button class="tab-button" data-tab="history">Historial</button>
-        </nav>
+        <div class="tab-buttons">
+            <button class="tab-button active" data-tab="ranking">Ranking General</button>
+            <button class="tab-button" data-tab="player">Perfil de Jugador</button>
+            <button class="tab-button" data-tab="metrics">Métricas Avanzadas</button>
+            <button class="tab-button" data-tab="history">Historial de Partidos</button>
+        </div>
 
-        <section id="ranking" class="tab-pane active">
-            <h2>Clasificación de Jugadores</h2>
-            <div id="ranking-container" class="table-container"></div>
-        </section>
+        <div id="ranking" class="tab-pane active">
+            <h2>Ranking General por Puntos</h2>
+            <div id="ranking-container"></div>
+        </div>
 
-        <section id="player" class="tab-pane">
-            <h2>Estadísticas de Jugador</h2>
+        <div id="player" class="tab-pane">
+            <h2>Perfil de Jugador</h2>
             <div class="filter-controls">
                 <select id="player-select"></select>
             </div>
-            <div id="player-profile-container" class="card"></div>
-        </section>
+            <div id="player-profile-container"></div>
+        </div>
 
-        <section id="metrics" class="tab-pane">
-            <h2>Métricas Generales</h2>
-            <div class="chart-container">
-                <canvas id="rankingEvolutionChart"></canvas>
+        <div id="metrics" class="tab-pane">
+            <h2>Métricas del Club</h2>
+            <div id="metrics-container">
+                <div class="card">
+                    <h3>Puntos Totales por Jugador</h3>
+                    <div class="chart-container">
+                        <canvas id="pointsChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Partidos Ganados vs. Perdidos</h3>
+                    <div class="chart-container">
+                        <canvas id="winLossChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Rendimiento con Parejas Habituales</h3>
+                    <div id="habitual-pairs-table"></div>
+                </div>
             </div>
-            <div class="chart-container">
-                <canvas id="evolutionChart"></canvas>
-            </div>
-            <div id="metrics-container" class="card"></div>
-        </section>
+        </div>
 
-        <section id="history" class="tab-pane">
+        <div id="history" class="tab-pane">
             <h2>Historial de Partidos</h2>
-            <div class="filter-controls">
-                <select id="month-filter">
-                    <option value="">Todos los meses</option>
-                    <option value="1">Enero</option>
-                    <option value="2">Febrero</option>
-                    <option value="3">Marzo</option>
-                    <option value="4">Abril</option>
-                    <option value="5">Mayo</option>
-                    <option value="6">Junio</option>
-                    <option value="7">Julio</option>
-                    <option value="8">Agosto</option>
-                    <option value="9">Septiembre</option>
-                    <option value="10">Octubre</option>
-                    <option value="11">Noviembre</option>
-                    <option value="12">Diciembre</option>
-                </select>
-                <select id="player-filter"></select>
-                <select id="result-filter">
-                    <option value="">Todos los resultados</option>
-                    <option value="won">Ganado</option>
-                    <option value="lost">Perdido</option>
-                    <option value="tied">Empatado</option>
-                </select>
-            </div>
-            <div id="history-container" class="table-container"></div>
-        </section>
+            <div id="history-container"></div>
+        </div>
+
     </main>
 
     <footer>
-        <p>Desarrollado con ❤️ para los amantes del pádel.</p>
+        <p>&copy; 2025 Club de Pádel</p>
     </footer>
 
-    <script src="backend.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
