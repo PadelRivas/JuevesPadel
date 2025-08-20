@@ -202,7 +202,7 @@ footer {
         padding: 0;
     }
     
-    /* Adaptación de tablas a tarjetas para móvil */
+    /* Estilo de tarjeta para tablas en móvil (ranking e historial) */
     #ranking-container thead,
     #history-container thead {
         position: absolute;
@@ -244,23 +244,26 @@ footer {
         font-weight: bold;
     }
     
-    /* Estilo para las tablas de Rendimiento (manteniendo el formato de tabla) */
+    /* Reglas específicas para las tablas de Rendimiento con Parejas y Rivales */
     .performance-table-container {
+        /* Para que el contenedor no tenga scroll lateral */
         overflow-x: hidden;
-        -webkit-overflow-scrolling: touch;
         width: 100%;
     }
     
     .performance-table {
-        min-width: 100%;
-        table-layout: fixed;
+        /* El layout de la tabla se ajusta a las columnas */
+        table-layout: auto;
+        /* El ancho se ajusta al contenido. Se evita el min-width */
+        width: 100%; 
     }
 
     .performance-table th, .performance-table td {
-        font-size: 0.75rem; /* Letras más pequeñas */
-        padding: 4px; /* Aún menos espaciado */
-        word-wrap: break-word; 
-        box-sizing: border-box;
+        font-size: 0.75rem; /* Tamaño de letra más pequeño para que quepa */
+        padding: 6px; /* Reducimos el espaciado para ganar espacio */
+        white-space: nowrap; /* Evitamos saltos de línea para mantener el formato de tabla */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Para los textos que sean demasiado largos */
     }
 
     /* Mantenemos el estilo de tabla para las parejas habituales */
