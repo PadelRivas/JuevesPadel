@@ -246,14 +246,14 @@ footer {
     
     /* Estilo para las tablas de Rendimiento (manteniendo el formato de tabla) */
     .performance-table-container {
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        /* Eliminamos el scroll, el contenido se ajustará automáticamente */
+        overflow-x: hidden;
     }
     
     .performance-table {
-        width: 100%;
-        min-width: 500px;
+        /* Quitamos el min-width para que la tabla se ajuste al 100% del contenedor */
+        min-width: unset; 
+        table-layout: fixed; /* Esto fuerza a las columnas a tener el mismo ancho */
     }
 
     .performance-table th, .performance-table td {
