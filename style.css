@@ -2,8 +2,8 @@
     --color-primary: #1A1341;
     --color-secondary: #BAFF29;
     --color-accent-1: #BAFF29;
-    --color-accent-2: #C2E7DA;
-    --color-background: #6290C3;
+    --color-accent-2: #6290C3;
+    --color-background: #C2E7DA;
     --color-text-light: #F1FFE2;
 }
 
@@ -147,7 +147,7 @@ select, input {
 .card {
     padding: 2rem;
     border-radius: 10px;
-    background-color: var(--color-background);
+    background-color: var(--color-text-light);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-top: 2rem;
 }
@@ -156,7 +156,7 @@ select, input {
     width: 100%;
     height: 400px;
     margin-bottom: 2rem;
-    background-color: var(--color-background);
+    background-color: var(--color-text-light);
     padding: 1rem;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -217,12 +217,12 @@ footer {
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        background-color: var(--color-accent-2); 
+        background-color: var(--color-text-light); 
     }
     
     #ranking-container tr:nth-child(even),
     #history-container tr:nth-child(even) {
-        background-color: var(--color-background);
+        background-color: var(--color-text-light);
     }
 
     #ranking-container td,
@@ -253,14 +253,14 @@ footer {
     
     .performance-table {
         width: 100%;
-        min-width: 500px; /* Asegura que la tabla no se comprima demasiado */
+        min-width: 500px;
     }
 
     .performance-table th, .performance-table td {
-        white-space: nowrap; /* Evita que el texto se salte de línea */
+        white-space: nowrap;
         overflow: hidden;
-        text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es muy largo */
-        padding: 8px 10px; /* Reduce el padding para ahorrar espacio */
+        text-overflow: ellipsis;
+        padding: 8px 10px;
     }
 
     /* Mantenemos el estilo de tabla para las parejas habituales */
