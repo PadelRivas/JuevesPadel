@@ -244,26 +244,27 @@ footer {
         font-weight: bold;
     }
     
-    /* Reglas específicas para las tablas de Rendimiento con Parejas y Rivales */
+    /* SOLUCIÓN DEFINITIVA para las tablas de Rendimiento (manteniendo el formato de tabla) */
     .performance-table-container {
-        /* Para que el contenedor no tenga scroll lateral */
+        /* Eliminamos cualquier scroll para asegurar que no aparezca */
         overflow-x: hidden;
         width: 100%;
+        /* La clave está en comprimir el contenido desde el contenedor */
+        box-sizing: border-box;
     }
     
     .performance-table {
-        /* El layout de la tabla se ajusta a las columnas */
-        table-layout: auto;
-        /* El ancho se ajusta al contenido. Se evita el min-width */
-        width: 100%; 
+        /* Hacemos la tabla 100% de ancha y le damos un layout fijo */
+        width: 100%;
+        table-layout: fixed;
     }
-
+    
     .performance-table th, .performance-table td {
-        font-size: 0.75rem; /* Tamaño de letra más pequeño para que quepa */
-        padding: 6px; /* Reducimos el espaciado para ganar espacio */
-        white-space: nowrap; /* Evitamos saltos de línea para mantener el formato de tabla */
-        overflow: hidden;
-        text-overflow: ellipsis; /* Para los textos que sean demasiado largos */
+        /* Forzamos el tamaño de la fuente y el padding para que quepa todo */
+        font-size: 0.75rem !important; /* El !important anula cualquier otro estilo */
+        padding: 4px !important; /* El !important asegura que no se sobrescriba */
+        word-wrap: break-word; /* Permite que las palabras se corten si es necesario */
+        box-sizing: border-box;
     }
 
     /* Mantenemos el estilo de tabla para las parejas habituales */
