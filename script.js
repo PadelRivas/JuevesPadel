@@ -278,10 +278,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <thead>
                     <tr>
                         <th>Compañero</th>
-                        <th>Puntos/Partido</th>
-                        <th>Victorias</th>
-                        <th>Derrotas</th>
-                        <th>Empates</th>
+                        <th>P/P</th>
+                        <th>V</th>
+                        <th>D</th>
+                        <th>E</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -308,10 +308,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <thead>
                     <tr>
                         <th>Rival</th>
-                        <th>Puntos/Partido</th>
-                        <th>Victorias</th>
-                        <th>Derrotas</th>
-                        <th>Empates</th>
+                        <th>P/P</th>
+                        <th>V</th>
+                        <th>D</th>
+                        <th>E</th>
                     </tr>
                 </thead>
                 <tbody>
