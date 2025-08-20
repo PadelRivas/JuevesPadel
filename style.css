@@ -1,9 +1,9 @@
 :root {
     --color-primary: #1A1341;
-    --color-secondary: #6290C3;
+    --color-secondary: #BAFF29;
     --color-accent-1: #BAFF29;
     --color-accent-2: #C2E7DA;
-    --color-background: #F1FFE2;
+    --color-background: #6290C3;
     --color-text-light: #F1FFE2;
 }
 
@@ -65,13 +65,13 @@ main {
 
 .tab-button.active {
     background-color: var(--color-secondary);
-    color: var(--color-text-light);
+    color: var(--color-primary);
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .tab-button:hover {
     background-color: var(--color-secondary);
-    color: var(--color-text-light);
+    color: var(--color-primary);
 }
 
 .tab-pane {
@@ -113,7 +113,7 @@ th, td {
 }
 
 th {
-    background-color: var(--color-secondary);
+    background-color: var(--color-primary);
     color: var(--color-text-light);
     text-transform: uppercase;
     font-size: 0.9rem;
@@ -124,7 +124,7 @@ tr:nth-child(even) {
 }
 
 tr:hover {
-    background-color: #e8f5e9;
+    background-color: var(--color-accent-2);
 }
 
 .filter-controls {
@@ -215,9 +215,6 @@ footer {
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        /* Ajuste de color de fondo para que las tarjetas
-           impares y pares se distingan en la vista móvil.
-        */
         background-color: var(--color-accent-2); 
     }
     
@@ -230,7 +227,7 @@ footer {
         display: flex;
         justify-content: space-between;
         padding: 12px 15px;
-        border-bottom: 1px solid var(--color-accent-2);
+        border-bottom: 1px solid var(--color-background);
         text-align: right;
     }
 
