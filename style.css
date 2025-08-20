@@ -170,7 +170,7 @@ footer {
     margin-top: auto;
 }
 
-/* Responsive design good*/
+/* Responsive design */
 @media (max-width: 768px) {
     main {
         padding: 0;
@@ -246,8 +246,9 @@ footer {
     
     /* Estilo para las tablas de Rendimiento (manteniendo el formato de tabla) */
     .performance-table-container {
-        /* Permite que el contenido se desborde sin afectar el layout general */
-        overflow-x: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
     }
     
     .performance-table {
@@ -256,12 +257,8 @@ footer {
     }
 
     .performance-table th, .performance-table td {
-        padding: 6px 4px; /* Aún más pequeño */
-        white-space: normal;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: auto;
-        /* Forzamos a que las celdas se ajusten al contenido */
+        font-size: 0.75rem; /* Letras más pequeñas */
+        padding: 4px; /* Aún menos espaciado */
         word-wrap: break-word; 
         box-sizing: border-box;
     }
