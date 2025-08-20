@@ -3,13 +3,31 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Los datos del backend no se han cargado (appData no está definido).');
         return;
     }
-    
+
     const players = appData.jugadores;
     const matches = appData.partidos;
     const sets = appData.sets;
     const results = appData.resultados;
     const couples = appData.parejas;
     const match_couples = appData.partido_pareja;
+
+    // Almacena los colores asignados a cada jugador para consistencia
+    const playerColors = {};
+
+    const getRandomColor = (playerName) => {
+        if (playerColors[playerName]) {
+            return playerColors[playerName];
+        }
+        
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        
+        playerColors[playerName] = color;
+        return color;
+    };
 
     const tabs = document.querySelectorAll('.tab-button');
     const panes = document.querySelectorAll('.tab-pane');
@@ -447,10 +465,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const labels = Array.from({length: playedMatches.length}, (_, i) => `Partido ${i + 1}`);
         const datasets = {};
         players.forEach(p => {
+            const color = getRandomColor(p.nombre);
             datasets[p.nombre] = {
                 label: p.nombre,
                 data: [],
-                borderColor: '#' + Math.floor(Math.random()*16777215).toString(16),
+                borderColor: color,
+                backgroundColor: color,
                 tension: 0.4
             };
         });
@@ -488,7 +508,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const rankingData = getRankingEvolutionData();
         const ctx = document.getElementById('rankingEvolutionChart').getContext('2d');
         
-        new Chart(ctx, {
+        // Destroy existing chart if it exists
+        if (window.rankingEvolutionChartInstance) {
+            window.rankingEvolutionChartInstance.destroy();
+        }
+
+        window.rankingEvolutionChartInstance = new Chart(ctx, {
             type: 'line',
             data: rankingData,
             options: {
@@ -525,10 +550,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('metrics-container');
         const chartCanvas = document.getElementById('evolutionChart');
         
-        // Renderizar el nuevo gráfico de ranking
         renderRankingEvolutionChart();
 
-        // CÁLCULO Y GENERACIÓN DEL GRÁFICO DE MÉTRICAS GENERALES
         const allPlayedMatches = matches.filter(match => {
             const matchResult = results.find(r => r.id_partido === match.id_partido);
             return matchResult && matchResult.equipo_ganador !== -1;
@@ -552,8 +575,13 @@ document.addEventListener('DOMContentLoaded', () => {
             avgGamesData.push((totalGames / numMatches).toFixed(2));
         });
 
+        // Destroy existing chart if it exists
+        if (window.metricsChartInstance) {
+            window.metricsChartInstance.destroy();
+        }
+
         if (allPlayedMatches.length > 0) {
-            new Chart(chartCanvas, {
+            window.metricsChartInstance = new Chart(chartCanvas, {
                 type: 'line',
                 data: {
                     labels: labels,
@@ -853,7 +881,6 @@ document.addEventListener('DOMContentLoaded', () => {
     playerFilter.addEventListener('change', renderHistory);
     resultFilter.addEventListener('change', renderHistory);
 
-    // Las llamadas iniciales deben ir al final del DOMContentLoaded
     renderRanking();
     populatePlayerSelect();
 });
