@@ -36,8 +36,8 @@ main {
     flex: 1;
     max-width: 1200px;
     margin: 2rem auto;
-    padding: 0 1rem;
     width: 100%;
+    padding: 0 1rem;
 }
 
 .tab-buttons {
@@ -173,11 +173,11 @@ footer {
 /* Responsive design */
 @media (max-width: 768px) {
     main {
-        padding: 0; /* Ahorramos los 16px de cada lado para aprovechar todo el ancho */
+        padding: 0;
     }
 
     .tab-buttons {
-        flex-direction: row; /* Pestañas en horizontal */
+        flex-direction: row;
     }
 
     .tab-button {
@@ -207,28 +207,28 @@ footer {
 
     #ranking-container tr, #history-container tr {
         display: block;
-        margin-bottom: 1rem; /* Espacio entre tarjetas */
+        margin-bottom: 1rem;
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         background-color: var(--color-background);
     }
 
+    /* Estilo de tarjeta corregido con Flexbox */
     #ranking-container td, #history-container td {
-        border: none;
-        position: relative;
-        padding-left: 50%;
-        text-align: right;
+        display: flex; /* Usamos Flexbox para alinear el label y el valor */
+        justify-content: space-between; /* Espaciamos el label y el valor */
+        padding: 12px 15px; /* Padding normal */
+        border-bottom: 1px solid var(--color-accent-2);
+        text-align: right; /* Alineamos el valor a la derecha */
     }
 
     #ranking-container td::before, #history-container td::before {
         content: attr(data-label);
-        position: absolute;
-        left: 0;
-        width: 45%;
-        padding-left: 15px;
+        flex-basis: 50%; /* Damos una base de 50% al label */
+        text-align: left; /* Alineamos el label a la izquierda */
+        padding-right: 15px; /* Espacio entre el label y el valor */
         white-space: nowrap;
-        text-align: left;
         font-weight: bold;
     }
     
