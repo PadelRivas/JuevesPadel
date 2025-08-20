@@ -246,21 +246,22 @@ footer {
     
     /* Estilo para las tablas de Rendimiento (manteniendo el formato de tabla) */
     .performance-table-container {
-        /* Eliminamos el scroll, el contenido se ajustará automáticamente */
-        overflow-x: hidden;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
     }
     
     .performance-table {
-        /* Quitamos el min-width para que la tabla se ajuste al 100% del contenedor */
-        min-width: unset; 
-        table-layout: fixed; /* Esto fuerza a las columnas a tener el mismo ancho */
+        /* No se usa table-layout: fixed, el navegador calculará el ancho */
+        min-width: 100%; /* Asegura que la tabla no sea más pequeña que su contenedor */
     }
 
     .performance-table th, .performance-table td {
-        white-space: nowrap;
+        padding: 8px 10px;
+        /* Permitimos que el texto se ajuste en varias líneas para evitar desbordes */
+        white-space: normal;
         overflow: hidden;
         text-overflow: ellipsis;
-        padding: 8px 10px;
     }
 
     /* Mantenemos el estilo de tabla para las parejas habituales */
