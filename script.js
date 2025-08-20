@@ -517,6 +517,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             title: {
                                 display: true,
                                 text: 'Número de Partido'
+                            },
+                            ticks: {
+                                display: false
                             }
                         }
                     }
