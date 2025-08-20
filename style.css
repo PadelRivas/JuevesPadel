@@ -238,15 +238,14 @@ tbody tr:hover {
         padding: 1rem 0;
     }
 
-    /* NUEVA REGLA PARA HACER LAS TABLAS DEL JUGADOR RESPONSIVAS */
-    /* Se aplica a las tablas dentro del contenedor del perfil del jugador */
+    /* Regla para hacer las tablas del jugador responsivas */
     #player-profile-container table {
         min-width: unset;
-        font-size: 0.8rem; /* Reduce el tamaño de la fuente para que el texto quepa */
+        font-size: 0.8rem;
     }
 
     #player-profile-container table th,
     #player-profile-container table td {
-        padding: 8px; /* Reduce el relleno para ganar espacio */
+        padding: 8px;
     }
 }

@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
@@ -40,6 +41,9 @@
 
         <div id="metrics" class="tab-pane">
             <h2>Métricas Generales</h2>
+            <div class="chart-container">
+                <canvas id="evolutionChart"></canvas>
+            </div>
             <div id="metrics-container" class="metrics-container"></div>
         </div>
 

@@ -187,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('ranking-container');
 
         const tableContent = sortedPlayers.map((player, index) => {
-            // Lógica para añadir emoticonos de medalla al podio
             let medal = '';
             if (index === 0) {
                 medal = '🥇';
@@ -243,7 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Calcula la diferencia de sets y juegos
         const setDifference = player.setsWon - player.setsLost;
         const gameDifference = player.gamesWon - player.gamesLost;
 
@@ -269,7 +267,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     };
     
-    // Funciones que devuelven el HTML para las tablas
     const getPartnerStatsHTML = (playerId) => {
         const partnerStats = getPartnerStats(playerId);
         const sortedPartnerStats = partnerStats.sort((a, b) => b.pointsPerMatch - a.pointsPerMatch);
@@ -346,7 +343,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectedPlayerId) {
             renderPlayerProfile(selectedPlayerId);
         } else {
-            // Si se selecciona la opción por defecto, borra el contenido
             document.getElementById('player-profile-container').innerHTML = '';
         }
     });
@@ -461,26 +457,78 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- PESTAÑA MÉTRICAS ---
     const renderMetrics = () => {
         const container = document.getElementById('metrics-container');
+        const chartCanvas = document.getElementById('evolutionChart');
         container.innerHTML = '';
         
-        // Rendimiento en Sets y Juegos
+        // CÁLCULO DE LA EVOLUCIÓN PARA EL GRÁFICO
         const allPlayedMatches = matches.filter(match => {
             const matchResult = results.find(r => r.id_partido === match.id_partido);
             return matchResult && matchResult.equipo_ganador !== -1;
-        });
+        }).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
         let totalSets = 0;
         let totalGames = 0;
-        allPlayedMatches.forEach(match => {
+        const labels = [];
+        const avgSetsData = [];
+        const avgGamesData = [];
+
+        allPlayedMatches.forEach((match, index) => {
             const matchSets = sets.filter(s => s.id_partido === match.id_partido);
             totalSets += matchSets.length;
             matchSets.forEach(s => totalGames += (s.juegos_equipo1 + s.juegos_equipo2));
+            
+            const numMatches = index + 1;
+            
+            labels.push(`Partido ${numMatches}`);
+            avgSetsData.push((totalSets / numMatches).toFixed(2));
+            avgGamesData.push((totalGames / numMatches).toFixed(2));
         });
 
-        const avgSetsPerMatch = allPlayedMatches.length > 0 ? (totalSets / allPlayedMatches.length).toFixed(2) : 0;
-        const avgGamesPerSet = totalSets > 0 ? (totalGames / totalSets).toFixed(2) : 0;
+        // GENERACIÓN DEL GRÁFICO CON CHART.JS
+        if (allPlayedMatches.length > 0) {
+            new Chart(chartCanvas, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Promedio de Sets por Partido',
+                        data: avgSetsData,
+                        borderColor: '#3f51b5',
+                        backgroundColor: 'rgba(63, 81, 181, 0.2)',
+                        tension: 0.1
+                    }, {
+                        label: 'Promedio de Juegos por Set',
+                        data: avgGamesData,
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Promedio'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Número de Partido'
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            chartCanvas.style.display = 'none';
+        }
 
-        // Curiosidades y Récords
+        // Curiosidades y Récords (esto se mantiene igual)
         const allSets = sets.filter(s => {
             const matchResult = results.find(r => r.id_partido === s.id_partido);
             return matchResult && matchResult.equipo_ganador !== -1;
@@ -496,7 +544,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const matchWithMaxDiff = matches.find(m => m.id_partido === maxGameDiffSet.matchId);
         
-        // Obtener los nombres de los jugadores del partido con mayor diferencia de juegos
         let playersWithMaxDiff = 'N/A';
         if (matchWithMaxDiff) {
             const matchCouplesData = match_couples.filter(mp => mp.id_partido === matchWithMaxDiff.id_partido);
@@ -558,10 +605,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         container.innerHTML = `
-            <h3>Rendimiento en Sets y Juegos</h3>
-            <p><strong>Promedio de sets por partido:</strong> ${avgSetsPerMatch}</p>
-            <p><strong>Promedio de juegos por set:</strong> ${avgGamesPerSet}</p>
-
             <h3>Curiosidades y Récords</h3>
             <ul>
                 <li><strong>Mayor diferencia de juegos en un set:</strong> ${maxGameDiffSet.diff} juegos (${maxGameDiffSet.games}) en el partido del ${matchWithMaxDiff ? matchWithMaxDiff.fecha : 'N/A'}. Jugadores: ${playersWithMaxDiff}</li>
@@ -625,7 +668,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let playerTeam = null;
             if (selectedPlayerId) {
-                // CORRECCIÓN: Usar parseInt() para comparar el ID del jugador
                 const playerIdInt = parseInt(selectedPlayerId);
                 const playerCoupleData = match_couples.find(mp => {
                     const pair = couples.find(p => p.id_pareja === mp.id_pareja);
@@ -648,7 +690,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     if (selectedResult === 'won' && matchResult.equipo_ganador === 0) return false;
                     if (selectedResult === 'tied' && matchResult.equipo_ganador !== 0) return false;
-                    if (selectedResult === 'lost' && matchResult.equipo_ganador === 0) return false;
+                    if (selectedResult === 'lost' && matchResult.equigo_ganador === 0) return false;
                 }
             }
             
@@ -660,7 +702,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const couple1Data = matchCouplesData.find(mp => mp.equipo === 1);
             const couple2Data = matchCouplesData.find(mp => mp.equipo === 2);
             
-            // CORRECCIÓN: Comprobar si los datos de la pareja existen antes de usarlos
             if (!couple1Data || !couple2Data) {
                 return '';
             }
