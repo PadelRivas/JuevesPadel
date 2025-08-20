@@ -517,7 +517,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 }
-            });
+            }
+        });
     };
 
     const renderMetrics = () => {
@@ -852,6 +853,7 @@ document.addEventListener('DOMContentLoaded', () => {
     playerFilter.addEventListener('change', renderHistory);
     resultFilter.addEventListener('change', renderHistory);
 
+    // Las llamadas iniciales deben ir al final del DOMContentLoaded
     renderRanking();
     populatePlayerSelect();
 });
