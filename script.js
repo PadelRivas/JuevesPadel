@@ -24,21 +24,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 playButton.style.display = 'block';
                 video.style.display = 'block';
                 playButton.addEventListener('click', () => {
+					// Ocultamos el botón al hacer clic en él
+                    playButton.style.display = 'none'; 
                     video.play().catch(error => {
                         console.error('Error al intentar reproducir el video en iOS:', error);
-                        alert('No se pudo reproducir el video. Intenta de nuevo.');
+                        // Ocultamos el overlay y cargamos la web aunque haya error
+                        videoOverlay.classList.add('hidden'); 
                     });
                 });
             }
         } else {
             // En otros dispositivos, intentamos la reproducción automática.
+			// Ocultamos el botón 
+			playButton.style.display = 'none';
             video.play().catch(error => {
                 console.error('La reproducción automática falló:', error);
-                // Si la reproducción automática falla, mostramos el overlay con el botón.
-                if (playButton) {
-                    playButton.style.display = 'block';
-                    videoOverlay.style.display = 'flex';
-                }
+				// Ocultamos el overlay y cargamos la web aunque haya error
+				videoOverlay.classList.add('hidden'); 
             });
         }
     }
