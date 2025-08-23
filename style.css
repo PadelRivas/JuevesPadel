@@ -208,6 +208,11 @@ footer {
         padding: 0;
     }
     
+    /* Adaptación del logo */
+    .logo {
+        height: 40px; /* Tamaño del logo para móvil */
+    }
+
     /* Adaptación de tablas a tarjetas para móvil */
     #ranking-container thead,
     #history-container thead {
@@ -224,6 +229,7 @@ footer {
         overflow: hidden;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         background-color: var(--color-text-light); 
+        border: 2px solid var(--color-primary);
     }
     
     #ranking-container tr:nth-child(even),
