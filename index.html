@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Padel Stats</title>
+    <title>Estadísticas Pádel Jueves</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
-        <h1>🎾 Pádel Jueves 🎾</h1>
+        <img src="logoJueves.png" alt="Padel Jueves Logo" class="logo">
     </header>
 
     <main>
@@ -32,16 +32,11 @@
                 <select id="player-select"></select>
             </div>
             <div id="player-profile-container" class="card"></div>
+            <div id="player-stats-container" class="card"></div>
         </section>
 
         <section id="metrics" class="tab-pane">
-            <h2>Métricas Generales</h2>
-            <div class="chart-container">
-                <canvas id="rankingEvolutionChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <canvas id="evolutionChart"></canvas>
-            </div>
+            <h2>Métricas del Equipo</h2>
             <div id="metrics-container" class="card"></div>
         </section>
 
