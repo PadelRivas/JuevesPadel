@@ -1,19 +1,44 @@
 document.addEventListener('DOMContentLoaded', () => {
-	// Ocultar la capa de video al finalizar el video
-	const videoOverlay = document.getElementById('intro-video-overlay');
-	const video = document.getElementById('intro-video');
+	// --- CÓDIGO ACTUALIZADO PARA DETECTAR iOS Y GESTIONAR EL VIDEO ---
+    const videoOverlay = document.getElementById('intro-video-overlay');
+    const video = document.getElementById('intro-video');
+    const playButton = document.getElementById('play-button');
 
-	if (video && videoOverlay) {
-		// Escuchar el evento 'ended' que se dispara cuando el video termina
-		video.addEventListener('ended', () => {
-			videoOverlay.classList.add('hidden');
-		});
+    const isIOS = () => {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        return /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+    };
 
-		// Opcional: Reproducir el video al cargar la página
-		video.play().catch(error => {
-			console.error("La reproducción automática del video falló: ", error);
-		});
-	}
+    if (video && videoOverlay && playButton) {
+        if (isIOS()) {
+            // Lógica para iOS: el botón es necesario, espera al clic del usuario
+            video.addEventListener('ended', () => {
+                videoOverlay.classList.add('hidden');
+            });
+            
+            playButton.addEventListener('click', () => {
+                playButton.style.display = 'none'; // Oculta el botón
+                video.play().catch(error => {
+                    console.error("La reproducción del video falló: ", error);
+                    // En caso de fallo, ocultamos la superposición para no bloquear la web
+                    videoOverlay.classList.add('hidden');
+                });
+            });
+        } else {
+            // Lógica para otros dispositivos: no es necesario el botón, auto-reproduce
+            video.addEventListener('ended', () => {
+                videoOverlay.classList.add('hidden');
+            });
+            video.play().then(() => {
+                // Si la reproducción inicia sin problemas, oculta el overlay
+                videoOverlay.classList.add('hidden');
+            }).catch(error => {
+                console.error("La reproducción automática del video falló: ", error);
+                // Si falla, muestra el botón como fallback para que el usuario pueda interactuar
+                playButton.style.display = 'flex'; // Asegura que el botón se muestre si el autoplay falla
+            });
+        }
+    }
 	
     if (typeof appData === 'undefined') {
         console.error('Los datos del backend no se han cargado (appData no está definido).');
