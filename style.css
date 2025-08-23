@@ -28,7 +28,7 @@ header {
 }
 
 .logo {
-    height: 60px; /* Ajusta este valor si necesitas que sea más grande o pequeño */
+    height: 150px; /* Ajusta este valor si necesitas que sea más grande o pequeño */
     margin: 0;
     font-weight: 600;
 }
