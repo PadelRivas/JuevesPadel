@@ -1,4 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
+	// Ocultar la capa de video al finalizar el video
+	const videoOverlay = document.getElementById('intro-video-overlay');
+	const video = document.getElementById('intro-video');
+
+	if (video && videoOverlay) {
+		// Escuchar el evento 'ended' que se dispara cuando el video termina
+		video.addEventListener('ended', () => {
+			videoOverlay.classList.add('hidden');
+		});
+
+		// Opcional: Reproducir el video al cargar la página
+		video.play().catch(error => {
+			console.error("La reproducción automática del video falló: ", error);
+		});
+	}
+	
     if (typeof appData === 'undefined') {
         console.error('Los datos del backend no se han cargado (appData no está definido).');
         return;
