@@ -23,7 +23,7 @@ header {
     background-color: var(--color-primary);
     color: var(--color-text-light);
     text-align: center;
-    padding: 2rem 1rem;
+    padding: 0.5rem 0; /* He reducido el espacio arriba y abajo (2rem a 0.5rem) y eliminado los lados */
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -210,7 +210,7 @@ footer {
     
     /* Adaptación del logo */
     .logo {
-        height: 40px; /* Tamaño del logo para móvil */
+        height: 100px; /* Tamaño del logo para móvil */
     }
 
     /* Adaptación de tablas a tarjetas para móvil */
