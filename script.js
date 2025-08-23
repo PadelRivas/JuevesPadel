@@ -4,35 +4,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoOverlay = document.getElementById('intro-video-overlay');
     const playButton = document.getElementById('play-button');
 
-    // Función para detectar si el usuario está en un dispositivo iOS
     const isIOS = () => {
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
         return /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
     };
 
-    if (video && videoOverlay && playButton) {
+    if (video && videoOverlay) {
         if (isIOS()) {
-            // Para iOS, mostramos el botón y ocultamos el video
+            // Para iOS, mostramos el botón y ocultamos el video, ya que la reproducción
+            // automática puede estar bloqueada.
+            video.style.display = 'block'; // Aseguramos que el video sea visible
             playButton.style.display = 'block';
-            video.style.display = 'none';
 
-            // Agregamos el evento al botón de "Entrar"
             playButton.addEventListener('click', () => {
-                videoOverlay.classList.add('hidden');
-                video.play();
+                video.play().then(() => {
+                    videoOverlay.classList.add('hidden');
+                }).catch(error => {
+                    console.error('Error al intentar reproducir el video en iOS:', error);
+                    alert('No se pudo reproducir el video. Por favor, inténtelo de nuevo.');
+                });
             });
         } else {
-            // Para otros dispositivos, reproducimos automáticamente el video y ocultamos el botón
-            video.play().then(() => {
-                video.muted = false;
-                videoOverlay.classList.add('hidden');
-            }).catch(error => {
-                console.error('La reproducción automática falló:', error);
-                // Si falla la reproducción, mostramos el botón para que el usuario pueda interactuar
-                playButton.style.display = 'block';
-                video.style.display = 'block';
-                video.muted = true;
-            });
+            // Para otros dispositivos, intentamos la reproducción automática.
+            // Primero nos aseguramos de que el video esté listo para evitar errores.
+            video.addEventListener('canplaythrough', () => {
+                video.play().then(() => {
+                    videoOverlay.classList.add('hidden');
+                }).catch(error => {
+                    console.error('La reproducción automática falló:', error);
+                    // Si falla la reproducción automática, mostramos el botón
+                    // para que el usuario pueda interactuar.
+                    playButton.style.display = 'block';
+                    videoOverlay.style.display = 'flex';
+                });
+            }, { once: true }); // El evento se dispara una sola vez
         }
     }
 	
