@@ -8,7 +8,7 @@
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Outfit', sans-serif;
     margin: 0;
     padding: 0;
     background-color: var(--color-background);
@@ -23,11 +23,12 @@ header {
     background-color: var(--color-primary);
     color: var(--color-text-light);
     text-align: center;
-    padding: 2rem 1rem;
+    padding: 0.5rem 0; /* He reducido el espacio arriba y abajo (2rem a 0.5rem) y eliminado los lados */
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-h1 {
+.logo {
+    height: 150px; /* Ajusta este valor si necesitas que sea más grande o pequeño */
     margin: 0;
     font-weight: 600;
 }
@@ -107,7 +108,6 @@ table {
 }
 
 th, td {
-    text-align: center; /* Centrado */
     padding: 12px 15px;
     border-bottom: 1px solid var(--color-accent-2);
 }
@@ -117,6 +117,11 @@ th {
     color: var(--color-text-light);
     text-transform: uppercase;
     font-size: 0.9rem;
+    text-align: center;
+}
+
+td {
+    text-align: center;
 }
 
 tr:nth-child(even) {
@@ -150,7 +155,7 @@ select, input {
     background-color: var(--color-text-light);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-top: 2rem;
-    border: 2px solid var(--color-primary); /* Borde añadido */
+    border: 2px solid var(--color-primary);
 }
 
 .chart-container {
@@ -203,6 +208,11 @@ footer {
         padding: 0;
     }
     
+    /* Adaptación del logo */
+    .logo {
+        height: 100px; /* Tamaño del logo para móvil */
+    }
+
     /* Adaptación de tablas a tarjetas para móvil */
     #ranking-container thead,
     #history-container thead {
@@ -219,6 +229,7 @@ footer {
         overflow: hidden;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         background-color: var(--color-text-light); 
+        border: 2px solid var(--color-primary);
     }
     
     #ranking-container tr:nth-child(even),
@@ -232,7 +243,7 @@ footer {
         justify-content: space-between;
         padding: 12px 15px;
         border-bottom: 1px solid var(--color-background);
-        text-align: center; /* Centrado */
+        text-align: right;
     }
 
     #ranking-container td::before,
@@ -271,7 +282,7 @@ footer {
         font-size: 0.7rem;
         white-space: normal;
         word-wrap: break-word;
-        text-align: center; /* Centrado */
+        text-align: center;
     }
     
     #habitual-pairs-table table, #habitual-pairs-table thead, #habitual-pairs-table tbody, #habitual-pairs-table th, #habitual-pairs-table td, #habitual-pairs-table tr {
@@ -284,10 +295,61 @@ footer {
 
     #habitual-pairs-table td {
         padding-left: 12px;
-        text-align: center; /* Centrado */
+        text-align: center;
     }
 
     #habitual-pairs-table td::before {
         content: none;
     }
+}
+
+/* Nuevo estilo para la pantalla de introducción */
+#intro-video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-primary);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+	flex-direction: column;
+    transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+}
+
+#intro-video {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+	object-fit: cover;
+    display: block;
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#play-button {
+    z-index: 1010;
+    background-color: var(--color-accent-1);
+    color: var(--color-primary);
+    border: none;
+    padding: 1rem 3rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+#play-button:hover {
+    transform: scale(1.05);
+}
+
+#intro-video-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
 }

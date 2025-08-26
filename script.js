@@ -1,4 +1,50 @@
 document.addEventListener('DOMContentLoaded', () => {
+	// --- CÓDIGO ACTUALIZADO PARA DETECTAR iOS Y GESTIONAR EL VIDEO ---
+    const video = document.getElementById('intro-video');
+    const videoOverlay = document.getElementById('intro-video-overlay');
+    const playButton = document.getElementById('play-button');
+
+    const isIOS = () => {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        return /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+    };
+
+    if (video && videoOverlay) {
+        // Agregamos un evento para ocultar el overlay cuando el video termine.
+        video.addEventListener('ended', () => {
+            videoOverlay.classList.add('hidden');
+        });
+        
+        // También nos aseguramos de que el video se silencie antes de reproducirse.
+        video.muted = true;
+        
+        if (isIOS()) {
+            // En iOS, mostramos el botón y la lógica de reproducción.
+            if (playButton) {
+                playButton.style.display = 'block';
+                video.style.display = 'block';
+                playButton.addEventListener('click', () => {
+					// Ocultamos el botón al hacer clic en él
+                    playButton.style.display = 'none'; 
+                    video.play().catch(error => {
+                        console.error('Error al intentar reproducir el video en iOS:', error);
+                        // Ocultamos el overlay y cargamos la web aunque haya error
+                        videoOverlay.classList.add('hidden'); 
+                    });
+                });
+            }
+        } else {
+            // En otros dispositivos, intentamos la reproducción automática.
+			// Ocultamos el botón 
+			playButton.style.display = 'none';
+            video.play().catch(error => {
+                console.error('La reproducción automática falló:', error);
+				// Ocultamos el overlay y cargamos la web aunque haya error
+				videoOverlay.classList.add('hidden'); 
+            });
+        }
+    }
+	
     if (typeof appData === 'undefined') {
         console.error('Los datos del backend no se han cargado (appData no está definido).');
         return;
@@ -187,7 +233,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const playersStats = getPlayerStats();
 
     const renderRanking = () => {
-        const sortedPlayers = [...playersStats].sort((a, b) => b.pointsPerMatch - a.pointsPerMatch);
+        const sortedPlayers = [...playersStats].sort((a, b) => {
+			const avgA = a.matchesPlayed > 0 ? a.totalPoints / a.matchesPlayed : 0;
+			const avgB = b.matchesPlayed > 0 ? b.totalPoints / b.matchesPlayed : 0;
+			return avgB - avgA;
+		});
         const container = document.getElementById('ranking-container');
 
         const tableContent = sortedPlayers.map((player, index) => {
@@ -471,31 +521,41 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
 
-        playedMatches.forEach(match => {
-            const matchCouples = match_couples.filter(mp => mp.id_partido === match.id_partido);
-            const playersInMatch = new Set();
-            matchCouples.forEach(mp => {
-                const couple = couples.find(c => c.id_pareja === mp.id_pareja);
-                playersInMatch.add(couple.id_jugador1);
-                playersInMatch.add(couple.id_jugador2);
-            });
+        // Nuevo objeto para rastrear partidos jugados por cada jugador en la evolución.
+		const playerMatchesPlayed = {};
+		players.forEach(p => playerMatchesPlayed[p.id_jugador] = 0);
 
-            playersInMatch.forEach(playerId => {
-                const points = calculatePlayerPoints(playerId, match.id_partido);
-                playerPoints[playerId] += points;
-            });
+		playedMatches.forEach(match => {
+			const matchCouples = match_couples.filter(mp => mp.id_partido === match.id_partido);
+			const playersInMatch = new Set();
+			matchCouples.forEach(mp => {
+				const couple = couples.find(c => c.id_pareja === mp.id_pareja);
+				playersInMatch.add(couple.id_jugador1);
+				playersInMatch.add(couple.id_jugador2);
+			});
 
-            const currentRanking = players.map(p => ({
-                id: p.id_jugador,
-                nombre: p.nombre,
-                puntos: playerPoints[p.id_jugador]
-            })).sort((a, b) => b.puntos - a.puntos);
+			playersInMatch.forEach(playerId => {
+				const points = calculatePlayerPoints(playerId, match.id_partido);
+				playerPoints[playerId] += points;
+				// Aumenta el contador de partidos jugados para este jugador
+				playerMatchesPlayed[playerId]++; 
+			});
 
-            players.forEach(p => {
-                const rank = currentRanking.findIndex(r => r.id === p.id_jugador) + 1;
-                datasets[p.nombre].data.push(rank);
-            });
-        });
+			const currentRanking = players.map(p => {
+				const matchesPlayed = playerMatchesPlayed[p.id_jugador];
+				const avgPoints = matchesPlayed > 0 ? playerPoints[p.id_jugador] / matchesPlayed : 0;
+				return {
+					id: p.id_jugador,
+					nombre: p.nombre,
+					avgPoints: avgPoints // Ahora usamos la media de puntos para ordenar
+				};
+			}).sort((a, b) => b.avgPoints - a.avgPoints); // Ordena por la media de puntos
+
+			players.forEach(p => {
+				const rank = currentRanking.findIndex(r => r.id === p.id_jugador) + 1;
+				datasets[p.nombre].data.push(rank);
+			});
+		});
         
         return { labels, datasets: Object.values(datasets) };
     };
