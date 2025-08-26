@@ -103,6 +103,11 @@ const appData = {
             "id_resultado": 2,
             "id_partido": 2,
             "equipo_ganador": 1
+        },
+        {
+            "id_resultado": 3,
+            "id_partido": 3,
+            "equipo_ganador": -1
         }
     ],
     "sets": [
