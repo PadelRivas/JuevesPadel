@@ -233,7 +233,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const playersStats = getPlayerStats();
 
     const renderRanking = () => {
-        const sortedPlayers = [...playersStats].sort((a, b) => b.pointsPerMatch - a.pointsPerMatch);
+        const sortedPlayers = [...playersStats].sort((a, b) => {
+			const avgA = a.matchesPlayed > 0 ? a.totalPoints / a.matchesPlayed : 0;
+			const avgB = b.matchesPlayed > 0 ? b.totalPoints / b.matchesPlayed : 0;
+			return avgB - avgA;
+		});
         const container = document.getElementById('ranking-container');
 
         const tableContent = sortedPlayers.map((player, index) => {
