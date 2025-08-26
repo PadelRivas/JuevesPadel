@@ -536,9 +536,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const currentRanking = players.map(p => ({
-                id: p.id_jugador,
-                nombre: p.nombre,
-                puntos: playerPoints[p.id_jugador]
+                id: stats.id_jugador,
+				nombre: stats.nombre,
+				puntos: stats.pointsPerMatch
             })).sort((a, b) => b.puntos - a.puntos);
 
             players.forEach(p => {
