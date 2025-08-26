@@ -521,31 +521,41 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
 
-        playedMatches.forEach(match => {
-            const matchCouples = match_couples.filter(mp => mp.id_partido === match.id_partido);
-            const playersInMatch = new Set();
-            matchCouples.forEach(mp => {
-                const couple = couples.find(c => c.id_pareja === mp.id_pareja);
-                playersInMatch.add(couple.id_jugador1);
-                playersInMatch.add(couple.id_jugador2);
-            });
+        // Nuevo objeto para rastrear partidos jugados por cada jugador en la evolución.
+		const playerMatchesPlayed = {};
+		players.forEach(p => playerMatchesPlayed[p.id_jugador] = 0);
 
-            playersInMatch.forEach(playerId => {
-                const points = calculatePlayerPoints(playerId, match.id_partido);
-                playerPoints[playerId] += points;
-            });
+		playedMatches.forEach(match => {
+			const matchCouples = match_couples.filter(mp => mp.id_partido === match.id_partido);
+			const playersInMatch = new Set();
+			matchCouples.forEach(mp => {
+				const couple = couples.find(c => c.id_pareja === mp.id_pareja);
+				playersInMatch.add(couple.id_jugador1);
+				playersInMatch.add(couple.id_jugador2);
+			});
 
-            const currentRanking = players.map(p => ({
-                id: stats.id_jugador,
-				nombre: stats.nombre,
-				puntos: stats.pointsPerMatch
-            })).sort((a, b) => b.puntos - a.puntos);
+			playersInMatch.forEach(playerId => {
+				const points = calculatePlayerPoints(playerId, match.id_partido);
+				playerPoints[playerId] += points;
+				// Aumenta el contador de partidos jugados para este jugador
+				playerMatchesPlayed[playerId]++; 
+			});
 
-            players.forEach(p => {
-                const rank = currentRanking.findIndex(r => r.id === p.id_jugador) + 1;
-                datasets[p.nombre].data.push(rank);
-            });
-        });
+			const currentRanking = players.map(p => {
+				const matchesPlayed = playerMatchesPlayed[p.id_jugador];
+				const avgPoints = matchesPlayed > 0 ? playerPoints[p.id_jugador] / matchesPlayed : 0;
+				return {
+					id: p.id_jugador,
+					nombre: p.nombre,
+					avgPoints: avgPoints // Ahora usamos la media de puntos para ordenar
+				};
+			}).sort((a, b) => b.avgPoints - a.avgPoints); // Ordena por la media de puntos
+
+			players.forEach(p => {
+				const rank = currentRanking.findIndex(r => r.id === p.id_jugador) + 1;
+				datasets[p.nombre].data.push(rank);
+			});
+		});
         
         return { labels, datasets: Object.values(datasets) };
     };
