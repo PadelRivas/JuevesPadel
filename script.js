@@ -26,6 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 playButton.addEventListener('click', () => {
 					// Ocultamos el botón al hacer clic en él
                     playButton.style.display = 'none'; 
+					// Añadimos un fallback: si el video no se reproduce en 2 segundos, ocultamos el overlay.
+                    setTimeout(() => {
+                        videoOverlay.classList.add('hidden');
+                    }, 2000); 
                     video.play().catch(error => {
                         console.error('Error al intentar reproducir el video en iOS:', error);
                         // Ocultamos el overlay y cargamos la web aunque haya error
