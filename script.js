@@ -217,30 +217,39 @@ document.addEventListener('DOMContentLoaded', () => {
 			return avgB - avgA;
 		});
         const container = document.getElementById('ranking-container');
+		let lastPointsPerMatch = null;
+		let currentPosition = 0;
 
         const tableContent = sortedPlayers.map((player, index) => {
-            let medal = '';
-            if (index === 0) {
-                medal = '🥇';
-            } else if (index === 1) {
-                medal = '🥈';
-            } else if (index === 2) {
-                medal = '🥉';
-            }
-            
-            return `
-                <tr>
-                    <td data-label="Posición">${index + 1} ${medal}</td>
-                    <td data-label="Nombre">${player.nombre}</td>
-                    <td data-label="Puntos por Partido">${player.pointsPerMatch.toFixed(2)}</td>
-                    <td data-label="Puntos Totales">${player.totalPoints}</td>
-                    <td data-label="Partidos Jugados">${player.matchesPlayed}</td>
-                    <td data-label="Ganados">${player.wins}</td>
-                    <td data-label="Empatados">${player.ties}</td>
-                    <td data-label="Perdidos">${player.losses}</td>
-                </tr>
-            `;
-        }).join('');
+            const playerPointsPerMatch = player.matchesPlayed > 0 ? player.totalPoints / player.matchesPlayed : 0;
+
+			if (index === 0 || playerPointsPerMatch < lastPointsPerMatch) {
+				currentPosition = index + 1;
+			}
+			lastPointsPerMatch = playerPointsPerMatch;
+
+			let medal = '';
+			if (currentPosition === 1) {
+				medal = '🥇';
+			} else if (currentPosition === 2) {
+				medal = '🥈';
+			} else if (currentPosition === 3) {
+				medal = '🥉';
+			}
+			
+			return `
+				<tr>
+					<td data-label="Posición">${currentPosition} ${medal}</td>
+					<td data-label="Nombre">${player.nombre}</td>
+					<td data-label="Puntos por Partido">${player.pointsPerMatch.toFixed(2)}</td>
+					<td data-label="Puntos Totales">${player.totalPoints}</td>
+					<td data-label="Partidos Jugados">${player.matchesPlayed}</td>
+					<td data-label="Ganados">${player.wins}</td>
+					<td data-label="Empatados">${player.ties}</td>
+					<td data-label="Perdidos">${player.losses}</td>
+				</tr>
+			`;
+		}).join('');
 
         container.innerHTML = `
             <table>
@@ -478,28 +487,27 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const getRankingEvolutionData = () => {
-        const playerPoints = {};
-        players.forEach(p => playerPoints[p.id_jugador] = 0);
-        
-        const playedMatches = matches.filter(match => {
-            const result = results.find(r => r.id_partido === match.id_partido);
-            return result && result.equipo_ganador !== -1;
-        }).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+		const playerPoints = {};
+		players.forEach(p => playerPoints[p.id_jugador] = 0);
+		
+		const playedMatches = matches.filter(match => {
+			const result = results.find(r => r.id_partido === match.id_partido);
+			return result && result.equipo_ganador !== -1;
+		}).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
-        const labels = Array.from({length: playedMatches.length}, (_, i) => `Partido ${i + 1}`);
-        const datasets = {};
-        players.forEach(p => {
-            const color = getRandomColor(p.nombre);
-            datasets[p.nombre] = {
-                label: p.nombre,
-                data: [],
-                borderColor: color,
-                backgroundColor: color,
-                tension: 0.4
-            };
-        });
+		const labels = Array.from({length: playedMatches.length}, (_, i) => `Partido ${i + 1}`);
+		const datasets = {};
+		players.forEach(p => {
+			const color = getRandomColor(p.nombre);
+			datasets[p.nombre] = {
+				label: p.nombre,
+				data: [],
+				borderColor: color,
+				backgroundColor: color,
+				tension: 0.4
+			};
+		});
 
-        // Nuevo objeto para rastrear partidos jugados por cada jugador en la evolución.
 		const playerMatchesPlayed = {};
 		players.forEach(p => playerMatchesPlayed[p.id_jugador] = 0);
 
@@ -515,7 +523,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			playersInMatch.forEach(playerId => {
 				const points = calculatePlayerPoints(playerId, match.id_partido);
 				playerPoints[playerId] += points;
-				// Aumenta el contador de partidos jugados para este jugador
 				playerMatchesPlayed[playerId]++; 
 			});
 
@@ -525,18 +532,25 @@ document.addEventListener('DOMContentLoaded', () => {
 				return {
 					id: p.id_jugador,
 					nombre: p.nombre,
-					avgPoints: avgPoints // Ahora usamos la media de puntos para ordenar
+					avgPoints: avgPoints
 				};
-			}).sort((a, b) => b.avgPoints - a.avgPoints); // Ordena por la media de puntos
+			}).sort((a, b) => b.avgPoints - a.avgPoints);
 
-			players.forEach(p => {
-				const rank = currentRanking.findIndex(r => r.id === p.id_jugador) + 1;
-				datasets[p.nombre].data.push(rank);
+			// Lógica actualizada para manejar empates en la clasificación de la gráfica
+			let lastAvgPoints = null;
+			let currentRank = 0;
+			
+			currentRanking.forEach((p, index) => {
+				if (index === 0 || p.avgPoints < lastAvgPoints) {
+					currentRank = index + 1;
+				}
+				lastAvgPoints = p.avgPoints;
+				datasets[p.nombre].data.push(currentRank);
 			});
 		});
-        
-        return { labels, datasets: Object.values(datasets) };
-    };
+		
+		return { labels, datasets: Object.values(datasets) };
+	};
 
     const renderRankingEvolutionChart = () => {
         const rankingData = getRankingEvolutionData();
