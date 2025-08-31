@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const playerPointsPerMatch = player.matchesPlayed > 0 ? player.totalPoints / player.matchesPlayed : 0;
 
 			if (index === 0 || playerPointsPerMatch < lastPointsPerMatch) {
-				currentPosition = index + 1;
+				currentPosition++;
 			}
 			lastPointsPerMatch = playerPointsPerMatch;
 
@@ -537,13 +537,12 @@ document.addEventListener('DOMContentLoaded', () => {
 			}).sort((a, b) => b.avgPoints - a.avgPoints);
 
 			// Lógica actualizada para manejar empates en la clasificación de la gráfica
-			// Lógica actualizada para manejar empates en la clasificación de la gráfica
 			let lastAvgPoints = null;
 			let currentRank = 1;
-
+			
 			currentRanking.forEach((p, index) => {
 				if (index > 0 && p.avgPoints < lastAvgPoints) {
-					currentRank = index + 1;
+					currentRank++;
 				}
 				lastAvgPoints = p.avgPoints;
 				datasets[p.nombre].data.push(currentRank);
