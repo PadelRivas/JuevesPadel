@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
         const container = document.getElementById('ranking-container');
 		let lastPointsPerMatch = null;
-		let currentPosition = 1;
+		let currentPosition = 0;
 
         const tableContent = sortedPlayers.map((player, index) => {
             const playerPointsPerMatch = player.matchesPlayed > 0 ? player.totalPoints / player.matchesPlayed : 0;
