@@ -229,6 +229,16 @@ const appData = {
             "id_resultado": 9,
             "id_partido": 9,
             "equipo_ganador": null
+        },
+        {
+            "id_resultado": 10,
+            "id_partido": 10,
+            "equipo_ganador": 1
+        },
+        {
+            "id_resultado": 11,
+            "id_partido": 11,
+            "equipo_ganador": 1
         }
     ],
     "sets": [
@@ -333,6 +343,20 @@ const appData = {
         {
             "id_set": 15,
             "id_partido": 9,
+            "numero_set": 1,
+            "juegos_equipo1": 0,
+            "juegos_equipo2": 0
+        },
+        {
+            "id_set": 16,
+            "id_partido": 10,
+            "numero_set": 1,
+            "juegos_equipo1": 0,
+            "juegos_equipo2": 0
+        },
+        {
+            "id_set": 17,
+            "id_partido": 11,
             "numero_set": 1,
             "juegos_equipo1": 0,
             "juegos_equipo2": 0
