@@ -219,6 +219,11 @@ const appData = {
             "id_resultado": 7,
             "id_partido": 7,
             "equipo_ganador": 1
+        },
+        {
+            "id_resultado": 8,
+            "id_partido": 8,
+            "equipo_ganador": 1
         }
     ],
     "sets": [
@@ -312,6 +317,13 @@ const appData = {
             "numero_set": 2,
             "juegos_equipo1": 6,
             "juegos_equipo2": 3
+        },
+        {
+            "id_set": 14,
+            "id_partido": 8,
+            "numero_set": 1,
+            "juegos_equipo1": 0,
+            "juegos_equipo2": 0
         }
     ],
     "partido_pareja": [
