@@ -224,11 +224,6 @@ const appData = {
             "id_resultado": 8,
             "id_partido": 8,
             "equipo_ganador": 1
-        },
-        {
-            "id_resultado": 9,
-            "id_partido": 9,
-            "equipo_ganador": null
         }
     ],
     "sets": [
@@ -326,13 +321,6 @@ const appData = {
         {
             "id_set": 14,
             "id_partido": 8,
-            "numero_set": 1,
-            "juegos_equipo1": 0,
-            "juegos_equipo2": 0
-        },
-        {
-            "id_set": 15,
-            "id_partido": 9,
             "numero_set": 1,
             "juegos_equipo1": 0,
             "juegos_equipo2": 0
