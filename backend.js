@@ -81,6 +81,10 @@ const appData = {
         {
             "id_partido": 12,
             "fecha": "2025-11-27"
+        },
+        {
+            "id_partido": 13,
+            "fecha": "2025-12-04"
         }
     ],
     "parejas": [
@@ -254,6 +258,11 @@ const appData = {
         {
             "id_resultado": 15,
             "id_partido": 12,
+            "equipo_ganador": 1
+        },
+        {
+            "id_resultado": 16,
+            "id_partido": 13,
             "equipo_ganador": 1
         }
     ],
@@ -460,6 +469,27 @@ const appData = {
             "numero_set": 3,
             "juegos_equipo1": 6,
             "juegos_equipo2": 3
+        },
+        {
+            "id_set": 37,
+            "id_partido": 13,
+            "numero_set": 1,
+            "juegos_equipo1": 6,
+            "juegos_equipo2": 4
+        },
+        {
+            "id_set": 38,
+            "id_partido": 13,
+            "numero_set": 2,
+            "juegos_equipo1": 4,
+            "juegos_equipo2": 6
+        },
+        {
+            "id_set": 39,
+            "id_partido": 13,
+            "numero_set": 3,
+            "juegos_equipo1": 6,
+            "juegos_equipo2": 3
         }
     ],
     "partido_pareja": [
@@ -605,6 +635,18 @@ const appData = {
             "id_partido_pareja": 24,
             "id_partido": 12,
             "id_pareja": 22,
+            "equipo": 2
+        },
+        {
+            "id_partido_pareja": 25,
+            "id_partido": 13,
+            "id_pareja": 9,
+            "equipo": 1
+        },
+        {
+            "id_partido_pareja": 26,
+            "id_partido": 13,
+            "id_pareja": 15,
             "equipo": 2
         }
     ]};
