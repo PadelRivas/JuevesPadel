@@ -31,6 +31,10 @@ const appData = {
         {
             "id_jugador": 8,
             "nombre": "NAVAJAS"
+        },
+        {
+            "id_jugador": 9,
+            "nombre": "MELERO"
         }
     ],
     "partidos": [
@@ -41,6 +45,10 @@ const appData = {
         {
             "id_partido": 2,
             "fecha": "2026-09-03"
+        },
+        {
+            "id_partido": 3,
+            "fecha": "2026-09-10"
         }
     ],
     "parejas": [
@@ -63,6 +71,16 @@ const appData = {
             "id_pareja": 4,
             "id_jugador1": 7,
             "id_jugador2": 8
+        },
+        {
+            "id_pareja": 5,
+            "id_jugador1": 3,
+            "id_jugador2": 5
+        },
+        {
+            "id_pareja": 6,
+            "id_jugador1": 6,
+            "id_jugador2": 9
         }
     ],
     "resultados": [
@@ -75,6 +93,11 @@ const appData = {
             "id_resultado": 2,
             "id_partido": 2,
             "equipo_ganador": 1
+        },
+        {
+            "id_resultado": 3,
+            "id_partido": 3,
+            "equipo_ganador": 0
         }
     ],
     "sets": [
@@ -105,6 +128,27 @@ const appData = {
             "numero_set": 2,
             "juegos_equipo1": 6,
             "juegos_equipo2": 3
+        },
+        {
+            "id_set": 5,
+            "id_partido": 3,
+            "numero_set": 1,
+            "juegos_equipo1": 6,
+            "juegos_equipo2": 7
+        },
+        {
+            "id_set": 6,
+            "id_partido": 3,
+            "numero_set": 2,
+            "juegos_equipo1": 6,
+            "juegos_equipo2": 4
+        },
+        {
+            "id_set": 7,
+            "id_partido": 3,
+            "numero_set": 3,
+            "juegos_equipo1": 4,
+            "juegos_equipo2": 5
         }
     ],
     "partido_pareja": [
@@ -130,6 +174,18 @@ const appData = {
             "id_partido_pareja": 4,
             "id_partido": 2,
             "id_pareja": 4,
+            "equipo": 2
+        },
+        {
+            "id_partido_pareja": 5,
+            "id_partido": 3,
+            "id_pareja": 5,
+            "equipo": 1
+        },
+        {
+            "id_partido_pareja": 6,
+            "id_partido": 3,
+            "id_pareja": 6,
             "equipo": 2
         }
     ]};
