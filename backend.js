@@ -133,6 +133,14 @@ const appData = {
         {
             "id_partido": 37,
             "fecha": "2026-11-19"
+        },
+        {
+            "id_partido": 38,
+            "fecha": "2026-11-26"
+        },
+        {
+            "id_partido": 39,
+            "fecha": "2026-11-26"
         }
     ],
     "parejas": [
@@ -335,6 +343,26 @@ const appData = {
             "id_pareja": 71,
             "id_jugador1": 5,
             "id_jugador2": 12
+        },
+        {
+            "id_pareja": 72,
+            "id_jugador1": 1,
+            "id_jugador2": 3
+        },
+        {
+            "id_pareja": 73,
+            "id_jugador1": 2,
+            "id_jugador2": 8
+        },
+        {
+            "id_pareja": 74,
+            "id_jugador1": 5,
+            "id_jugador2": 7
+        },
+        {
+            "id_pareja": 75,
+            "id_jugador1": 6,
+            "id_jugador2": 10
         }
     ],
     "resultados": [
@@ -441,6 +469,11 @@ const appData = {
         {
             "id_resultado": 21,
             "id_partido": 37,
+            "equipo_ganador": 1
+        },
+        {
+            "id_resultado": 22,
+            "id_partido": 38,
             "equipo_ganador": 1
         }
     ],
@@ -780,6 +813,20 @@ const appData = {
             "numero_set": 3,
             "juegos_equipo1": 6,
             "juegos_equipo2": 3
+        },
+        {
+            "id_set": 49,
+            "id_partido": 38,
+            "numero_set": 1,
+            "juegos_equipo1": 6,
+            "juegos_equipo2": 3
+        },
+        {
+            "id_set": 50,
+            "id_partido": 38,
+            "numero_set": 2,
+            "juegos_equipo1": 6,
+            "juegos_equipo2": 2
         }
     ],
     "partido_pareja": [
@@ -1033,6 +1080,30 @@ const appData = {
             "id_partido_pareja": 74,
             "id_partido": 37,
             "id_pareja": 4,
+            "equipo": 2
+        },
+        {
+            "id_partido_pareja": 75,
+            "id_partido": 38,
+            "id_pareja": 72,
+            "equipo": 1
+        },
+        {
+            "id_partido_pareja": 76,
+            "id_partido": 38,
+            "id_pareja": 73,
+            "equipo": 2
+        },
+        {
+            "id_partido_pareja": 77,
+            "id_partido": 39,
+            "id_pareja": 74,
+            "equipo": 1
+        },
+        {
+            "id_partido_pareja": 78,
+            "id_partido": 39,
+            "id_pareja": 75,
             "equipo": 2
         }
     ]};
